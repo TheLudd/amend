@@ -35,4 +35,8 @@ describe 'container', ->
           @factory = (c) -> 'Now I know my ' + c
         Then -> @result = 'Now I know my abc'
 
-
+  describe '#value', ->
+    Given -> @value = 'hey'
+    When -> @subject.value 'foo', @value
+    When -> @result = @subject.get 'foo'
+    Then -> @result == 'hey'

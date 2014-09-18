@@ -26,6 +26,8 @@ module.exports = class Container
     throw new Error 'A factory must be a function' unless func instanceof Function
     @factories[name] = func
 
+  value: (name, value) -> @instances[name] = value
+
   get: (name) ->
     @_instantiate name unless @instances[name]?
     return @instances[name]
