@@ -7,10 +7,7 @@ module.exports = class Container
     dependencies = getArguments factory
     if dependencies.length
       instantiatedDependencies = dependencies.map (d) =>
-        if @instances[d]?
-          @instances[d]
-        else
-          @_instantiate d
+        if @instances[d]? then  @instances[d] else @_instantiate d
       instance = factory.apply null, instantiatedDependencies
     else
       instance = factory.call()

@@ -30,10 +30,17 @@ describe 'container', ->
       describe 'dependency hierarchy', ->
         Given ->
           @subject.factory 'a', -> 'a'
-          @subject.factory 'b', (a)-> a + 'b'
-          @subject.factory 'c', (b)-> b + 'c'
+          @subject.factory 'b', (a) -> a + 'b'
+          @subject.factory 'c', (b) -> b + 'c'
           @factory = (c) -> 'Now I know my ' + c
         Then -> @result = 'Now I know my abc'
+
+      describe 'factory with value dependency', ->
+        Given ->
+          @subject.value 'a', 'a'
+          @factory = (a) -> a + 'foo'
+        When -> @result = @subject.get 'foo'
+        Then -> @result == 'afoo'
 
   describe '#value', ->
     Given -> @value = 'hey'
@@ -44,8 +51,10 @@ describe 'container', ->
   describe '#get', ->
     When ->
       try
-        @subject.get 'nonExisting'
+        @result = @subject.get @module
       catch e
-        @result = e
-    Then -> @result.message == 'Could not find any module with name nonExisting'
+        @e = e
 
+    describe 'nonExisting', ->
+      Given -> @module = 'nonExisting'
+      Then -> @e.message == 'Could not find any module with name nonExisting'
