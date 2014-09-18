@@ -1,0 +1,4 @@
+--ui mocha-given
+--require coffee-script
+--compilers coffee:coffee-script/register
+--recursive
