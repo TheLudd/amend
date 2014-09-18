@@ -8,9 +8,9 @@ module.exports = class Container
     if dependencies.length
       instantiatedDependencies = dependencies.map (d) =>
         if @instances[d]?
-          return @instances[d]
+          @instances[d]
         else
-          return @_instantiate d
+          @_instantiate d
       instance = factory.apply null, instantiatedDependencies
     else
       instance = factory.call()
@@ -27,7 +27,5 @@ module.exports = class Container
     @factories[name] = func
 
   get: (name) ->
-    if @instances[name]?
-      return @instances[name]
-    else
-      @_instantiate name
+    @_instantiate name unless @instances[name]?
+    return @instances[name]
