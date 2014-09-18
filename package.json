@@ -9,6 +9,7 @@
     "mocha-given": "^0.1.2"
   },
   "scripts": {
+    "prepublish": "coffee -o dist -cb lib",
     "test": "mocha"
   },
   "keywords": [
