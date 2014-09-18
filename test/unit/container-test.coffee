@@ -40,3 +40,12 @@ describe 'container', ->
     When -> @subject.value 'foo', @value
     When -> @result = @subject.get 'foo'
     Then -> @result == 'hey'
+
+  describe '#get', ->
+    When ->
+      try
+        @subject.get 'nonExisting'
+      catch e
+        @result = e
+    Then -> @result.message == 'Could not find any module with name nonExisting'
+

@@ -29,5 +29,10 @@ module.exports = class Container
   value: (name, value) -> @instances[name] = value
 
   get: (name) ->
-    @_instantiate name unless @instances[name]?
-    return @instances[name]
+    if @instances[name]?
+      return @instances[name]
+    else if @factories[name]?
+      @_instantiate name unless @instances[name]?
+      return @instances[name]
+    else
+      throw new Error 'Could not find any module with name ' + name
