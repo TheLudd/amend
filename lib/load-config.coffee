@@ -1,5 +1,11 @@
 Container = require './container'
 
+getFullPath = (path) ->
+  if window?
+    return path
+  else
+    return [ process.cwd(), path ].join '/'
+
 evaluateType = (moduleConfig, module) ->
   return moduleConfig.type if moduleConfig.type?
   if typeof module == 'function'
@@ -20,7 +26,7 @@ module.exports = (config) ->
   Object.keys(config).forEach (key) ->
     moduleConfig = config[key]
     path = getPath moduleConfig
-    fullPath = [ process.cwd(), path ].join '/'
+    fullPath = getFullPath path
     module = require fullPath
     type = evaluateType moduleConfig, module
     if type == 'factory'
