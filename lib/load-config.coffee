@@ -1,14 +1,17 @@
 Container = require './container'
 
+isRelative = (path) -> path.indexOf('.') == 0
+
 getFullPath = (path) ->
-  if window?
+  if window? || !isRelative(path)
     return path
   else
     return [ process.cwd(), path ].join '/'
 
 evaluateType = (moduleConfig, module) ->
   return moduleConfig.type if moduleConfig.type?
-  if typeof module == 'function'
+  path = moduleConfig.require || moduleConfig
+  if typeof module == 'function' && isRelative path
     return 'factory'
   else
     return 'value'
@@ -22,9 +25,10 @@ getPath = (moduleConfig) ->
 module.exports = (config) ->
   throw new TypeError() unless config?
   di = new Container()
+  modules = config.modules
 
-  Object.keys(config).forEach (key) ->
-    moduleConfig = config[key]
+  Object.keys(modules).forEach (key) ->
+    moduleConfig = modules[key]
     path = getPath moduleConfig
     fullPath = getFullPath path
     module = require fullPath
