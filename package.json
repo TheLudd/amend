@@ -1,5 +1,5 @@
 {
-  "name": "bice",
+  "name": "amend",
   "version": "0.1.0",
   "description": "Dependency injection module and IoC container.",
   "main": "index.js",
