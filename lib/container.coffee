@@ -12,53 +12,50 @@ runFactory = (factory, args) ->
 module.exports = class Container
 
   constructor: ->
-    @factories = {}
-    @instances = {}
-    @constructors = {}
+    @_registrations = {}
+    @_instances = {}
 
   factory: (name, func) ->
     throw new Error 'A factory must be a function' unless func instanceof Function
-    @factories[name] = func
+    @_register 'factory', name, func
 
-  value: (name, value) -> @instances[name] = value
+  value: (name, value) -> @_register 'value', name, value
 
   class: (name, constructor) ->
     throw new TypeError 'A constructor must be a function' unless constructor instanceof Function
-    @constructors[name] = constructor
+    @_register 'class', name, constructor
 
   get: (name) ->
     throw new Error 'Could not find any module with name ' + name unless @isRegistered name
-    @_instantiate name unless @instances[name]?
-    return @instances[name]
+    @_instantiate name unless @_instances[name]?
+    return @_instances[name]
 
-  isRegistered: (name) ->
-    @factories[name]? || @constructors[name]? || @instances[name]?
+  isRegistered: (name) -> @_registrations[name]?
 
-  getArguments: (name, type) -> getArguments @_getFunction name, type
+  getArguments: (name) -> getArguments @_registrations[name].value
 
   loadAll: ->
-    factories = Object.keys @factories
-    constructors = Object.keys @constructors
-    factories.concat(constructors).forEach (name) =>
-      @_instantiate name unless @instances[name]?
+    Object.keys(@_registrations).forEach (name) =>
+      @_instantiate name unless @_instances[name]?
+
+  _register: (type, name, value) -> @_registrations[name] = value: value, type: type
 
   _instantiate: (name) ->
-    type = @_getType name
-    func = @_getFunction name, type
-    args = @getArguments name, type
-
-    dependencies = args.map (d) =>
-      if @instances[d]? then @instances[d] else @_instantiate d
-
-    if type == 'factory'
-      instance = runFactory func, dependencies
+    module = @_registrations[name]
+    type = module.type
+    value = module.value
+    if type == 'value'
+      instance = value
     else
-      instance = construct func, dependencies
+      args = getArguments value
 
-    @instances[name] = instance
+      dependencies = args.map (d) =>
+        if @_instances[d]? then @_instances[d] else @_instantiate d
+
+      if type == 'factory'
+        instance = runFactory value, dependencies
+      else if type == 'class'
+        instance = construct value, dependencies
+
+    @_instances[name] = instance
     return instance
-
-  _getFunction: (name, type = @_getType(name)) ->
-    if type == 'factory' then @factories[name] else @constructors[name]
-
-  _getType: (name) -> if @factories[name]? then 'factory' else 'class'

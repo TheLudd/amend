@@ -112,6 +112,6 @@ describe 'container', ->
     Given -> @subject.class 'bar', class Bar
     Given -> @subject.class 'bar2', class Bar2
     When -> @subject.loadAll()
-    When -> @result = Object.keys(@subject.instances)
+    When -> @result = Object.keys(@subject._instances)
     Then -> @result.length == 4
     And -> @foo2Count == 1
