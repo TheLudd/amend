@@ -27,15 +27,12 @@ module.exports = class Container
     @constructors[name] = constructor
 
   get: (name) ->
-    if @instances[name]?
-      return @instances[name]
-    else if @isRegistered name
-      @_instantiate name
-      return @instances[name]
-    else
-      throw new Error 'Could not find any module with name ' + name
+    throw new Error 'Could not find any module with name ' + name unless @isRegistered name
+    @_instantiate name unless @instances[name]?
+    return @instances[name]
 
-  isRegistered: (name) -> @factories[name]? || @constructors[name]?
+  isRegistered: (name) ->
+    @factories[name]? || @constructors[name]? || @instances[name]?
 
   _instantiate: (name) ->
     module = @_getFunctionAndType(name)
@@ -43,7 +40,7 @@ module.exports = class Container
     args = getArguments func
 
     dependencies = args.map (d) =>
-      if @instances[d]? then  @instances[d] else @_instantiate d
+      if @instances[d]? then @instances[d] else @_instantiate d
 
     if module.type == 'factory'
       instance = runFactory func, dependencies

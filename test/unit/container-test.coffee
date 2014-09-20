@@ -11,6 +11,10 @@ describe 'container', ->
       catch e
         @e = e
 
+    describe 'marks the factory registered', ->
+      Given -> @factory = ->
+      Then -> @subject.isRegistered('foo') == true
+
     describe 'null input', ->
       Then -> @e?
       And -> @e.message == 'A factory must be a function'
@@ -48,6 +52,10 @@ describe 'container', ->
     When -> @result = @subject.get 'foo'
     Then -> @result == 'hey'
 
+    describe 'marks the value as registerd', ->
+      Then -> @subject.isRegistered('foo') == true
+
+
   describe '#get', ->
     When ->
       try
@@ -76,6 +84,7 @@ describe 'container', ->
       When -> @result = @subject.get 'foo'
       Then -> !@e?
       And -> @result.bar == 'baz'
+      And -> @subject.isRegistered('foo') == true
 
     describe 'constructor with dependencies', ->
       Given -> @class =
@@ -84,3 +93,6 @@ describe 'container', ->
       When -> @subject.value 'otherModule', 'bar'
       When -> @result = @subject.get 'foo'
       Then -> @result.foo == 'bar'
+
+  describe '#isRegistered', ->
+    Then -> !@subject.isRegistered 'nonExisting'
