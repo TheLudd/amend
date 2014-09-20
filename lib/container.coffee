@@ -34,10 +34,12 @@ module.exports = class Container
   isRegistered: (name) ->
     @factories[name]? || @constructors[name]? || @instances[name]?
 
+  getArguments: (name, type) -> getArguments @_getFunction name, type
+
   _instantiate: (name) ->
     type = @_getType name
     func = @_getFunction name, type
-    args = @_getArguments name, type
+    args = @getArguments name, type
 
     dependencies = args.map (d) =>
       if @instances[d]? then @instances[d] else @_instantiate d
@@ -52,7 +54,5 @@ module.exports = class Container
 
   _getFunction: (name, type = @_getType(name)) ->
     if type == 'factory' then @factories[name] else @constructors[name]
-
-  _getArguments: (name, type) -> getArguments @_getFunction name, type
 
   _getType: (name) -> if @factories[name]? then 'factory' else 'class'

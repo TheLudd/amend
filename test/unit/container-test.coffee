@@ -96,3 +96,12 @@ describe 'container', ->
 
   describe '#isRegistered', ->
     Then -> !@subject.isRegistered 'nonExisting'
+
+  describe '#getArguments', ->
+    Given -> @subject.factory 'foo', (a, b, c) ->
+    When -> @result = @subject.getArguments('foo')
+    Then -> @result.length == 3
+    And -> @result[0] = 'a'
+    And -> @result[1] = 'b'
+    And -> @result[2] = 'c'
+
