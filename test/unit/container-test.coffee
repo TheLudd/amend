@@ -58,3 +58,22 @@ describe 'container', ->
     describe 'nonExisting', ->
       Given -> @module = 'nonExisting'
       Then -> @e.message == 'Could not find any module with name nonExisting'
+
+  describe '#class', ->
+    When ->
+      try
+        @subject.class 'foo', @class
+      catch e
+        @e = e
+
+    describe 'non valid constuctor', ->
+      Then -> @e.message == 'A constructor must be a function'
+
+    describe 'valid constructor', ->
+      Given -> @class =
+        class ExampleClass
+          constructor: (@bar = 'baz') ->
+      When -> @result = @subject.get 'foo'
+      Then -> !@e?
+      And -> @result.bar == 'baz'
+
