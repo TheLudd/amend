@@ -1,39 +1,15 @@
 getArguments = require './get-arguments'
 
+construct = (c, args) ->
+  class F
+    constructor: -> c.apply @, args
+  F.prototype = c.prototype
+  return new F()
+
+runFactory = (factory, args) ->
+  factory.apply null, args
+
 module.exports = class Container
-
-  _construct: (c, args) ->
-    dependencies = args.map (d) =>
-        if @instances[d]? then  @instances[d] else @_instantiate d
-    class F
-      constructor: ->
-        c.apply @, dependencies
-    F.prototype = c.prototype
-    return new F()
-
-  _instantiate: (name) ->
-    factory = @factories[name]
-    constructor = @constructors[name]
-    if factory?
-      dependencies = getArguments factory if factory?
-    else
-      dependencies = getArguments constructor
-
-    if dependencies.length
-      instantiatedDependencies = dependencies.map (d) =>
-        if @instances[d]? then  @instances[d] else @_instantiate d
-      if factory?
-        instance = factory.apply null, instantiatedDependencies
-      else
-        instance = @_construct constructor, dependencies
-    else
-      if factory?
-        instance = factory.call()
-      else
-        instance = @_construct constructor, dependencies
-
-    @instances[name] = instance
-    return instance
 
   constructor: ->
     @factories = {}
@@ -53,8 +29,33 @@ module.exports = class Container
   get: (name) ->
     if @instances[name]?
       return @instances[name]
-    else if @factories[name]? || @constructors[name]?
-      @_instantiate name unless @instances[name]?
+    else if @isRegistered name
+      @_instantiate name
       return @instances[name]
     else
       throw new Error 'Could not find any module with name ' + name
+
+  isRegistered: (name) -> @factories[name]? || @constructors[name]?
+
+  _instantiate: (name) ->
+    module = @_getFunctionAndType(name)
+    func = module.function
+    args = getArguments func
+
+    dependencies = args.map (d) =>
+      if @instances[d]? then  @instances[d] else @_instantiate d
+
+    if module.type == 'factory'
+      instance = runFactory func, dependencies
+    else
+      instance = construct func, dependencies
+
+    @instances[name] = instance
+    return instance
+
+  _getFunctionAndType: (name) ->
+    factory = @factories[name]
+    constructor = @constructors[name]
+
+    type: if factory? then 'factory' else 'class'
+    function: factory || constructor
