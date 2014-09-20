@@ -36,6 +36,12 @@ module.exports = class Container
 
   getArguments: (name, type) -> getArguments @_getFunction name, type
 
+  loadAll: ->
+    factories = Object.keys @factories
+    constructors = Object.keys @constructors
+    factories.concat(constructors).forEach (name) =>
+      @_instantiate name unless @instances[name]?
+
   _instantiate: (name) ->
     type = @_getType name
     func = @_getFunction name, type

@@ -105,3 +105,13 @@ describe 'container', ->
     And -> @result[1] = 'b'
     And -> @result[2] = 'c'
 
+  describe '#loadAll', ->
+    Given -> @foo2Count = 0
+    Given -> @subject.factory 'foo', (foo2) ->
+    Given -> @subject.factory 'foo2', => @foo2Count++
+    Given -> @subject.class 'bar', class Bar
+    Given -> @subject.class 'bar2', class Bar2
+    When -> @subject.loadAll()
+    When -> @result = Object.keys(@subject.instances)
+    Then -> @result.length == 4
+    And -> @foo2Count == 1
