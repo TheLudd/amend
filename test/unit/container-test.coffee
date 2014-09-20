@@ -72,8 +72,15 @@ describe 'container', ->
     describe 'valid constructor', ->
       Given -> @class =
         class ExampleClass
-          constructor: (@bar = 'baz') ->
+          constructor: -> @bar = 'baz'
       When -> @result = @subject.get 'foo'
       Then -> !@e?
       And -> @result.bar == 'baz'
 
+    describe 'constructor with dependencies', ->
+      Given -> @class =
+        class DependingClass
+          constructor: (otherModule) -> @foo = otherModule
+      When -> @subject.value 'otherModule', 'bar'
+      When -> @result = @subject.get 'foo'
+      Then -> @result.foo == 'bar'

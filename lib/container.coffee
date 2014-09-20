@@ -2,20 +2,35 @@ getArguments = require './get-arguments'
 
 module.exports = class Container
 
+  _construct: (c, args) ->
+    dependencies = args.map (d) =>
+        if @instances[d]? then  @instances[d] else @_instantiate d
+    class F
+      constructor: ->
+        c.apply @, dependencies
+    F.prototype = c.prototype
+    return new F()
+
   _instantiate: (name) ->
     factory = @factories[name]
     constructor = @constructors[name]
-    dependencies = getArguments factory if factory?
-    dependencies = dependencies || []
+    if factory?
+      dependencies = getArguments factory if factory?
+    else
+      dependencies = getArguments constructor
+
     if dependencies.length
       instantiatedDependencies = dependencies.map (d) =>
         if @instances[d]? then  @instances[d] else @_instantiate d
-      instance = factory.apply null, instantiatedDependencies
+      if factory?
+        instance = factory.apply null, instantiatedDependencies
+      else
+        instance = @_construct constructor, dependencies
     else
       if factory?
         instance = factory.call()
       else
-        instance = new constructor()
+        instance = @_construct constructor, dependencies
 
     @instances[name] = instance
     return instance
