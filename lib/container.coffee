@@ -35,14 +35,14 @@ module.exports = class Container
     @factories[name]? || @constructors[name]? || @instances[name]?
 
   _instantiate: (name) ->
-    module = @_getFunctionAndType(name)
-    func = module.function
-    args = getArguments func
+    type = @_getType name
+    func = @_getFunction name, type
+    args = @_getArguments name, type
 
     dependencies = args.map (d) =>
       if @instances[d]? then @instances[d] else @_instantiate d
 
-    if module.type == 'factory'
+    if type == 'factory'
       instance = runFactory func, dependencies
     else
       instance = construct func, dependencies
@@ -50,9 +50,9 @@ module.exports = class Container
     @instances[name] = instance
     return instance
 
-  _getFunctionAndType: (name) ->
-    factory = @factories[name]
-    constructor = @constructors[name]
+  _getFunction: (name, type = @_getType(name)) ->
+    if type == 'factory' then @factories[name] else @constructors[name]
 
-    type: if factory? then 'factory' else 'class'
-    function: factory || constructor
+  _getArguments: (name, type) -> getArguments @_getFunction name, type
+
+  _getType: (name) -> if @factories[name]? then 'factory' else 'class'
