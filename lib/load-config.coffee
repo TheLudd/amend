@@ -2,11 +2,12 @@ Container = require './container'
 
 isRelative = (path) -> path.indexOf('.') == 0
 
+basePath = process.cwd() if process
 getFullPath = (path) ->
   if window? || !isRelative(path)
     return path
   else
-    return [ process.cwd(), path ].join '/'
+    return [ basePath, path ].join '/'
 
 evaluateType = (moduleConfig, module) ->
   return moduleConfig.type if moduleConfig.type?
