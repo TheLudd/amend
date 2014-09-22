@@ -11,7 +11,8 @@ runFactory = (factory, args) ->
 
 module.exports = class Container
 
-  constructor: ->
+  constructor: (conf = {}) ->
+    @_modules = conf.modules || {}
     @_registrations = {}
     @_instances = {}
 
@@ -32,7 +33,11 @@ module.exports = class Container
 
   isRegistered: (name) -> @_registrations[name]?
 
-  getArguments: (name) -> getArguments @_registrations[name].value
+  getArguments: (name) ->
+    if @_modules[name]?
+      @_modules[name]
+    else
+      getArguments @_registrations[name].value
 
   loadAll: ->
     Object.keys(@_registrations).forEach (name) =>
@@ -44,12 +49,12 @@ module.exports = class Container
     module = @_registrations[name]
     type = module.type
     value = module.value
-    instance = if type == 'value' then value else @_instantiateWithDependencies value, type
+    instance = if type == 'value' then value else @_instantiateWithDependencies name, value, type
     @_instances[name] = instance
     return instance
 
-  _instantiateWithDependencies: (value, type) ->
-    args = getArguments value
+  _instantiateWithDependencies: (name, value, type) ->
+    args = @getArguments name
 
     dependencies = args.map (d) =>
       if @_instances[d]? then @_instances[d] else @_instantiate d

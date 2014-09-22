@@ -2,7 +2,7 @@ Container = require '../../lib/container'
 
 describe 'container', ->
 
-  When -> @subject = new Container
+  When -> @subject = new Container @conf
 
   describe '#factory', ->
     When ->
@@ -30,6 +30,13 @@ describe 'container', ->
         Given -> @factory = (bar) -> bar * 2
         When -> @subject.factory 'bar', -> 2
         Then -> @result == 4
+
+      describe 'with specified dependencies', ->
+        Given -> @conf = modules: foo: [ 'bar' ]
+        Given -> @factory = (a) -> a * 2
+        When -> @subject.value 'bar', 2
+        When -> @result = @subject.get 'foo'
+        Then -> @result = 4
 
       describe 'dependency hierarchy', ->
         Given -> @factory = (c) -> 'Now I know my ' + c
