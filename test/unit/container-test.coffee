@@ -2,7 +2,7 @@ Container = require '../../lib/container'
 
 describe 'container', ->
 
-  Given -> @subject = new Container
+  When -> @subject = new Container
 
   describe '#factory', ->
     When ->
@@ -20,29 +20,29 @@ describe 'container', ->
       And -> @e.message == 'A factory must be a function'
 
     describe 'valid input', ->
-      When -> @result = @subject.get 'foo'
+      Invariant -> @result = @subject.get 'foo'
 
       describe 'no dependency function', ->
         Given -> @factory = -> 'fooValue'
         Then -> @result == 'fooValue'
 
       describe 'one dependency', ->
-        Given -> @subject.factory 'bar', -> 2
         Given -> @factory = (bar) -> bar * 2
+        When -> @subject.factory 'bar', -> 2
         Then -> @result == 4
 
       describe 'dependency hierarchy', ->
-        Given ->
+        Given -> @factory = (c) -> 'Now I know my ' + c
+        When ->
           @subject.factory 'a', -> 'a'
           @subject.factory 'b', (a) -> a + 'b'
           @subject.factory 'c', (b) -> b + 'c'
-          @factory = (c) -> 'Now I know my ' + c
         Then -> @result = 'Now I know my abc'
 
       describe 'factory with value dependency', ->
-        Given ->
+        Given -> @factory = (a) -> a + 'foo'
+        When ->
           @subject.value 'a', 'a'
-          @factory = (a) -> a + 'foo'
         When -> @result = @subject.get 'foo'
         Then -> @result == 'afoo'
 
@@ -98,7 +98,7 @@ describe 'container', ->
     Then -> !@subject.isRegistered 'nonExisting'
 
   describe '#getArguments', ->
-    Given -> @subject.factory 'foo', (a, b, c) ->
+    When -> @subject.factory 'foo', (a, b, c) ->
     When -> @result = @subject.getArguments('foo')
     Then -> @result.length == 3
     And -> @result[0] = 'a'
@@ -107,10 +107,10 @@ describe 'container', ->
 
   describe '#loadAll', ->
     Given -> @foo2Count = 0
-    Given -> @subject.factory 'foo', (foo2) ->
-    Given -> @subject.factory 'foo2', => @foo2Count++
-    Given -> @subject.class 'bar', class Bar
-    Given -> @subject.class 'bar2', class Bar2
+    When -> @subject.factory 'foo', (foo2) ->
+    When -> @subject.factory 'foo2', => @foo2Count++
+    When -> @subject.class 'bar', class Bar
+    When -> @subject.class 'bar2', class Bar2
     When -> @subject.loadAll()
     When -> @result = Object.keys(@subject._instances)
     Then -> @result.length == 4
