@@ -2,3 +2,4 @@
 --require coffee-script
 --compilers coffee:coffee-script/register
 --recursive
+--reporter dot
