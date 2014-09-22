@@ -44,18 +44,15 @@ module.exports = class Container
     module = @_registrations[name]
     type = module.type
     value = module.value
-    if type == 'value'
-      instance = value
-    else
-      args = getArguments value
-
-      dependencies = args.map (d) =>
-        if @_instances[d]? then @_instances[d] else @_instantiate d
-
-      if type == 'factory'
-        instance = runFactory value, dependencies
-      else if type == 'class'
-        instance = construct value, dependencies
-
+    instance = if type == 'value' then value else @_instantiateWithDependencies value, type
     @_instances[name] = instance
     return instance
+
+  _instantiateWithDependencies: (value, type) ->
+    args = getArguments value
+
+    dependencies = args.map (d) =>
+      if @_instances[d]? then @_instances[d] else @_instantiate d
+
+    return runFactory value, dependencies if type == 'factory'
+    return construct value, dependencies if type == 'class'
