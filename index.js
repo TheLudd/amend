@@ -1,2 +1,1 @@
-var loadConfig = require('./dist/load-config');
-exports.fromConfig = loadConfig;
+exports.fromConfig = require('./dist/load-config');
