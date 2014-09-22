@@ -25,7 +25,7 @@ getPath = (moduleConfig) ->
 module.exports = (config) ->
   throw new TypeError() unless config?
   di = new Container()
-  modules = config.modules
+  modules = config.modules || {}
 
   Object.keys(modules).forEach (key) ->
     moduleConfig = modules[key]

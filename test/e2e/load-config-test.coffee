@@ -8,6 +8,10 @@ describe 'loadConfig', ->
       @e = e
   Then -> @e?
 
+  describe 'no modules', ->
+    Given -> @config = {}
+    Then -> !@e?
+
   describe 'one factory', ->
     Given -> @config = modules:
       foo: require: './test/e2e/simple-factory'
