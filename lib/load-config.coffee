@@ -23,9 +23,9 @@ getPath = (moduleConfig) ->
   else
     return moduleConfig.require
 
-module.exports = (config) ->
+module.exports = (config, opts) ->
   throw new TypeError() unless config?
-  di = new Container()
+  di = new Container opts
   modules = config.modules || {}
 
   Object.keys(modules).forEach (key) ->

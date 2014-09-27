@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Dependency injection module and IoC container.",
   "main": "index.js",
+  "bin": {
+    "amend-annotate": "bin/annotate.js"
+  },
   "devDependencies": {
     "chai": "^1.9.1",
     "coffee-script": "^1.8.0",
