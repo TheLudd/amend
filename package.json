@@ -4,7 +4,7 @@
   "description": "Dependency injection module and IoC container.",
   "main": "index.js",
   "bin": {
-    "amend-annotate": "bin/annotate.js"
+    "amend-annotate": "./bin/annotate.js"
   },
   "repository": {
     "type": "git",
