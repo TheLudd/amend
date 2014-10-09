@@ -16,6 +16,12 @@
     "prepublish": "coffee -o dist -cb lib",
     "test": "mocha"
   },
+  "files": [
+    "README.md",
+    "dist/",
+    "lib/",
+    "index.js"
+  ],
   "keywords": [
     "di",
     "ioc",
