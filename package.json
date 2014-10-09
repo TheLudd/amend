@@ -22,6 +22,7 @@
   },
   "files": [
     "README.md",
+    "bin/",
     "dist/",
     "lib/",
     "index.js"
