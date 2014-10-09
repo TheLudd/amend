@@ -6,6 +6,10 @@
   "bin": {
     "amend-annotate": "bin/annotate.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheLudd/amend"
+  },
   "devDependencies": {
     "chai": "^1.9.1",
     "coffee-script": "^1.8.0",
