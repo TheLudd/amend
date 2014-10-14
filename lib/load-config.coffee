@@ -22,7 +22,7 @@ getPath = (moduleConfig) ->
   else
     return moduleConfig.require
 
-module.exports = (config, opts = {}) ->
+module.exports = (config, basePath, opts = {}) ->
   throw new TypeError('No configuration was provided for loadConfig') unless config?
   di = new Container opts
   modules = config.modules || {}
@@ -30,7 +30,7 @@ module.exports = (config, opts = {}) ->
   Object.keys(modules).forEach (key) ->
     moduleConfig = modules[key]
     path = getPath moduleConfig
-    fullPath = getFullPath path, opts.basePath
+    fullPath = getFullPath path, basePath
     module = require fullPath
     type = evaluateType moduleConfig, module
     if type == 'factory'

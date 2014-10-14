@@ -1,12 +1,10 @@
 loadConfig = require '../../lib/load-config'
 describe 'loadConfig', ->
 
-  Given ->
-    @opts =
-      basePath: process.cwd()
+  Given -> @basePath = process.cwd()
   When ->
     try
-      @di = loadConfig @config, @opts
+      @di = loadConfig @config, @basePath, @opts
     catch e
       @e = e
   Then -> @e?
