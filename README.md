@@ -42,9 +42,10 @@ module.exports = //returned function/object
 ```
 
 # API
-## amend.fromConfig(config, options)
-Returns a di container with modules loaded acording to the specified configuration. ```options``` is passed to the created container.
-The configuration is a normal javascript object that contains the key ```modules``` which keys are the names of the modules. A module can have two configuration options.
+## amend.fromConfig(config, basePath, options)
+Returns a di container with modules loaded acording to the specified configuration.
+
+```config``` is a normal javascript object that contains the key ```modules``` which keys are the names of the modules. A module can have two configuration options.
 ```require``` is the path by which the module will be required. Require paths can be realtive or to an installed dependency, relative paths should be relative to the root directory of the poject.
 ```type```  is either "factory", "class" or "value".
 ```javascript
@@ -66,6 +67,11 @@ It is also possible to use "short" notation where only the path is configured:
   }
 ```
 When using "short" notation the module is assumed to be a factory if it returns a function, otherwise it is treated as a value. This means that it is only neccesary to use "long" notation when registering a class or when the module consists of a function that should be treated as a value.
+
+
+```basePath``` should be the root dir of the project using amend.
+
+```options``` is passed to the created container.
 
 ## new Container(options)
 Manually create a container. This is not the recommended way to do it as a container is created and populated with ```amend.fromConfig```. The container constuctor is required by ```reuire('amend').Container```.
