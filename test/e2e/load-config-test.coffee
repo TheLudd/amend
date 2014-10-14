@@ -1,6 +1,9 @@
 loadConfig = require '../../lib/load-config'
 describe 'loadConfig', ->
 
+  Given ->
+    @opts =
+      basePath: process.cwd()
   When ->
     try
       @di = loadConfig @config, @opts
