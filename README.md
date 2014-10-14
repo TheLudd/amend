@@ -9,6 +9,8 @@ or
 ```
 npm install amend --save
 ```
+# Current state
+Amend is in alpha mode. The dependency injector works but the project is not fully tested for the full development cycle, i.e work in development mode, packge and deploy to production. This is expected to be done in december 2014 since amend will be developed and used together with a production ready project by then.
 
 # environments
   * Works in node
