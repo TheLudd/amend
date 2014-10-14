@@ -23,7 +23,7 @@ getPath = (moduleConfig) ->
     return moduleConfig.require
 
 module.exports = (config, opts = {}) ->
-  throw new TypeError() unless config?
+  throw new TypeError('No configuration was provided for loadConfig') unless config?
   di = new Container opts
   modules = config.modules || {}
 
