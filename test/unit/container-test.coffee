@@ -20,15 +20,17 @@ describe 'container', ->
       And -> @e.message == 'A factory must be a function'
 
     describe 'valid input', ->
-      Invariant -> @result = @subject.get 'foo'
+      getFoo = -> @result = @subject.get 'foo'
 
       describe 'no dependency function', ->
         Given -> @factory = -> 'fooValue'
+        When getFoo
         Then -> @result == 'fooValue'
 
       describe 'one dependency', ->
         Given -> @factory = (bar) -> bar * 2
         When -> @subject.factory 'bar', -> 2
+        When getFoo
         Then -> @result == 4
 
       describe 'with specified dependencies', ->
