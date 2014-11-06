@@ -1,3 +1,4 @@
+ModuleNotFound = require './ModuleNotFound'
 getArguments = require './get-arguments'
 
 construct = (c, args) ->
@@ -8,6 +9,9 @@ construct = (c, args) ->
 
 runFactory = (factory, args) ->
   factory.apply null, args
+
+throwNotFound = (name, parent) ->
+  throw new ModuleNotFound name, parent
 
 module.exports = class Container
 
@@ -27,7 +31,7 @@ module.exports = class Container
     @_register 'class', name, constructor
 
   get: (name) ->
-    throw new Error 'Could not find any module with name ' + name unless @isRegistered name
+    throwNotFound name unless @isRegistered name
     @_instantiate name unless @_instances[name]?
     return @_instances[name]
 
@@ -45,8 +49,9 @@ module.exports = class Container
 
   _register: (type, name, value) -> @_registrations[name] = value: value, type: type
 
-  _instantiate: (name) ->
+  _instantiate: (name, parent) ->
     module = @_registrations[name]
+    throwNotFound name, parent unless module?
     type = module.type
     value = module.value
     instance = if type == 'value' then value else @_instantiateWithDependencies name, value, type
@@ -57,7 +62,7 @@ module.exports = class Container
     args = @getArguments name
 
     dependencies = args.map (d) =>
-      if @_instances[d]? then @_instances[d] else @_instantiate d
+      if @_instances[d]? then @_instances[d] else @_instantiate d, name
 
     return runFactory value, dependencies if type == 'factory'
     return construct value, dependencies if type == 'class'

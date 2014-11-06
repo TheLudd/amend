@@ -1,4 +1,5 @@
 Container = require '../../lib/container'
+ModuleNotFound = require '../../lib/ModuleNotFound'
 
 describe 'container', ->
 
@@ -20,12 +21,23 @@ describe 'container', ->
       And -> @e.message == 'A factory must be a function'
 
     describe 'valid input', ->
-      getFoo = -> @result = @subject.get 'foo'
+      getFoo = ->
+        try
+          @result = @subject.get 'foo'
+        catch e
+          @error = e
 
       describe 'no dependency function', ->
         Given -> @factory = -> 'fooValue'
         When getFoo
         Then -> @result == 'fooValue'
+
+      describe 'non existing dependencies', ->
+        Given -> @factory = (bar) ->
+        When getFoo
+        Then -> @error instanceof ModuleNotFound
+        And -> @error.module == 'bar'
+        And -> @error.parent == 'foo'
 
       describe 'one dependency', ->
         Given -> @factory = (bar) -> bar * 2
@@ -64,7 +76,6 @@ describe 'container', ->
     describe 'marks the value as registerd', ->
       Then -> @subject.isRegistered('foo') == true
 
-
   describe '#get', ->
     When ->
       try
@@ -74,7 +85,7 @@ describe 'container', ->
 
     describe 'nonExisting', ->
       Given -> @module = 'nonExisting'
-      Then -> @e.message == 'Could not find any module with name nonExisting'
+      Then -> @e.module == 'nonExisting'
 
   describe '#class', ->
     When ->
