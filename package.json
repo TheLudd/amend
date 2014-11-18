@@ -25,6 +25,7 @@
     "bin/",
     "dist/",
     "lib/",
+    "browserify.js",
     "index.js"
   ],
   "keywords": [
