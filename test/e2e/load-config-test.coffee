@@ -60,3 +60,19 @@ describe 'loadConfig', ->
       m: 'mocha'
     When -> @result = @di.get 'm'
     Then -> @result.test?
+
+  describe 'node_module of child node_module', ->
+    Given ->
+      @basePath = process.cwd() + '/node_modules/mocha-gwt'
+      @config = modules:
+        R: 'ramda'
+    When -> @result = @di.get 'R'
+    Then -> typeof @result.pathEq == 'function'
+
+  describe 'deduped childe node_module', ->
+    Given ->
+      @basePath = process.cwd() + '/node_modules/mocha-gwt'
+      @config = modules:
+        mocha: 'mocha'
+    When -> @result = @di.get 'mocha'
+    Then -> typeof @result == 'function'

@@ -3,10 +3,12 @@ Container = require './container'
 isRelative = (path) -> path.indexOf('.') == 0
 
 getFullPath = (path, basePath) ->
-  if window? || !isRelative(path)
+  if window?
     return path
-  else
+  else if isRelative path
     return [ basePath, path ].join '/'
+  else
+    return [ basePath, 'node_modules', path ].join '/'
 
 evaluateType = (moduleConfig, module) ->
   return moduleConfig.type if moduleConfig.type?
@@ -31,7 +33,10 @@ module.exports = (config, basePath, opts = {}) ->
     moduleConfig = modules[key]
     path = getPath moduleConfig
     fullPath = getFullPath path, basePath
-    module = require fullPath
+    try
+      module = require fullPath
+    catch e
+      module = require path
     type = evaluateType moduleConfig, module
     if type == 'factory'
       di.factory key, module
