@@ -14,8 +14,8 @@ throwNotFound = (name, parent) ->
   throw new ModuleNotFound name, parent
 
 module.exports = class Container
+  constructor: (conf = {}, @_parent) ->
 
-  constructor: (conf = {}) ->
     @_modules = conf.modules || {}
     @_registrations = {}
     @_instances = {}
@@ -32,10 +32,19 @@ module.exports = class Container
 
   get: (name) ->
     throwNotFound name unless @isRegistered name
-    @_instantiate name unless @_instances[name]?
-    return @_instances[name]
+    if @_registeredAt(name) == 'local'
+      @_instantiate name unless @_instances[name]?
+      return @_instances[name]
+    else
+      return @_parent.get(name)
 
-  isRegistered: (name) -> @_registrations[name]?
+  _registeredAt: (name) ->
+    if @_registrations[name]?
+      return 'local'
+    else if @_parent? && @_parent.isRegistered(name)
+      return 'parent'
+
+  isRegistered: (name) -> @_registeredAt(name) != undefined
 
   getArguments: (name) ->
     if @_modules[name]?
@@ -62,7 +71,12 @@ module.exports = class Container
     args = @getArguments name
 
     dependencies = args.map (d) =>
-      if @_instances[d]? then @_instances[d] else @_instantiate d, name
+      if @_instances[d]?
+        @_instances[d]
+      else if @_registeredAt(d) == 'parent'
+        @_parent._instantiate(d, name)
+      else
+        @_instantiate d, name
 
     return runFactory value, dependencies if type == 'factory'
     return construct value, dependencies if type == 'class'

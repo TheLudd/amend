@@ -3,7 +3,7 @@ ModuleNotFound = require '../../lib/ModuleNotFound'
 
 describe 'container', ->
 
-  When -> @subject = new Container @conf
+  When -> @subject = new Container @conf, @parent
 
   describe '#factory', ->
     When ->
@@ -37,7 +37,7 @@ describe 'container', ->
         When getFoo
         Then -> @error instanceof ModuleNotFound
         And -> @error.module == 'bar'
-        And -> @error.parent == 'foo'
+        And -> @error.caller == 'foo'
 
       describe 'one dependency', ->
         Given -> @factory = (bar) -> bar * 2
@@ -66,6 +66,24 @@ describe 'container', ->
           @subject.value 'a', 'a'
         When -> @result = @subject.get 'foo'
         Then -> @result == 'afoo'
+
+      describe 'with parent dependency', ->
+        Given ->
+          @parent = new Container()
+          @parent.value 'parentDep', 'bar'
+
+        describe 'then dependency is registered', ->
+          Then -> @subject.isRegistered 'parentDep'
+
+        describe 'can fetch from parent', ->
+          When -> @result = @subject.get 'parentDep'
+          Then -> @result == 'bar'
+
+        describe 'can have chained dependencies towards parent', ->
+          When ->
+            @subject.factory 'test', (parentDep) -> return parentDep
+            @result = @subject.get 'test'
+          Then -> @result == 'bar'
 
   describe '#value', ->
     Given -> @value = 'hey'
