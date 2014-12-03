@@ -70,13 +70,11 @@ module.exports = class Container
   _instantiateWithDependencies: (name, value, type) ->
     args = @getArguments name
 
-    dependencies = args.map (d) =>
-      if @_instances[d]?
-        @_instances[d]
-      else if @_registeredAt(d) == 'parent'
-        @_parent._instantiate(d, name)
+    dependencies = args.map (depName) =>
+      if @_registeredAt(depName) == 'parent'
+        @_parent.get(depName)
       else
-        @_instantiate d, name
+        @_instances[depName] || @_instantiate depName, name
 
     return runFactory value, dependencies if type == 'factory'
     return construct value, dependencies if type == 'class'

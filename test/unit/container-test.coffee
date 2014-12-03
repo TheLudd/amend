@@ -85,6 +85,27 @@ describe 'container', ->
             @result = @subject.get 'test'
           Then -> @result == 'bar'
 
+        describe 'only instantiates parent once', ->
+          Given ->
+            @parentCount = 0
+            @parent.factory 'counter', => @parentCount++
+          When ->
+            @subject.factory 'test', (counter) =>
+            @subject.factory 'test2', (counter) =>
+            @subject.get 'test'
+            @subject.get 'test2'
+          Then -> @parentCount == 1
+
+      describe '- nested parents', ->
+        Given ->
+          @master = new Container()
+          @master.value 'master', 'a'
+          @parent = new Container null, @master
+          @parent.factory 'parent', (master) -> master + 'b'
+        When -> @subject.factory 'foo', (parent) -> parent + 'c'
+        When getFoo
+        Then -> @result == 'abc'
+
   describe '#value', ->
     Given -> @value = 'hey'
     When -> @subject.value 'foo', @value
