@@ -164,6 +164,7 @@ describe 'container', ->
     And -> @result[1] = 'b'
     And -> @result[2] = 'c'
 
+
   describe '#loadAll', ->
     Given -> @foo2Count = 0
     When -> @subject.factory 'foo', (foo2) ->
@@ -174,3 +175,9 @@ describe 'container', ->
     When -> @result = Object.keys(@subject._instances)
     Then -> @result.length == 4
     And -> @foo2Count == 1
+
+    describe '- with parent', ->
+      Given ->
+        @parent = new Container()
+        @parent.factory 'loadMe', => @parentLoaded = true
+      Then -> @parentLoaded == true

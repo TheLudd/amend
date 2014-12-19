@@ -52,7 +52,10 @@ module.exports = class Container
     else
       getArguments @_registrations[name].value
 
+
+
   loadAll: ->
+    @_parent.loadAll() if @_parent?
     Object.keys(@_registrations).forEach (name) =>
       @_instantiate name unless @_instances[name]?
 
