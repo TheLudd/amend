@@ -11,11 +11,17 @@ function getRequrePath(val) {
 }
 
 module.exports = function(b, opts) {
+  function shouldInclude(key, path) {
+    return isLocal(path) ||
+      bundleExternal ||
+      opts.includeExternal.indexOf(key) !== -1;
+  }
+
   var bundleExternal = opts.bundleExternal !== false;
   var modules = opts.modules;
   Object.keys(modules).forEach(function(key) {
     var path = getRequrePath(modules[key]);
-    if (isLocal(path) || bundleExternal) {
+    if (shouldInclude(key, path)) {
       b.require(path);
     }
   });
