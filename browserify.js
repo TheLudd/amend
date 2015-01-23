@@ -12,9 +12,10 @@ function getRequrePath(val) {
 
 module.exports = function(b, opts) {
   function shouldInclude(key, path) {
+    var includeExternal = opts.includeExternal || [];
     return isLocal(path) ||
       bundleExternal ||
-      opts.includeExternal.indexOf(key) !== -1;
+      includeExternal.indexOf(key) !== -1;
   }
 
   var bundleExternal = opts.bundleExternal !== false;
