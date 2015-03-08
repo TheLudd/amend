@@ -8,7 +8,7 @@ describe 'loadConfig', ->
         config: @config
         basePath: @basePath
         opts: @opts
-        parent: @parent
+        parent: @parents
     catch e
       @e = e
   Then -> @e?
@@ -38,6 +38,7 @@ describe 'loadConfig', ->
         config: @parentConfig
         basePath: @basePath
         opts: @opts
+      @parents = [ @parent ]
     When -> @result = @di.get 'bar'
     Then -> @result == 'foobar'
 

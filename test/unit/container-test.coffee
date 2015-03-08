@@ -3,7 +3,7 @@ ModuleNotFound = require '../../lib/ModuleNotFound'
 
 describe 'container', ->
 
-  When -> @subject = new Container @conf, @parent
+  When -> @subject = new Container @conf, @parents
 
   describe '#factory', ->
     When ->
@@ -71,6 +71,7 @@ describe 'container', ->
         Given ->
           @parent = new Container()
           @parent.value 'parentDep', 'bar'
+          @parents = [ @parent ]
 
         describe 'then dependency is registered', ->
           Then -> @subject.isRegistered 'parentDep'
@@ -100,9 +101,21 @@ describe 'container', ->
         Given ->
           @master = new Container()
           @master.value 'master', 'a'
-          @parent = new Container null, @master
+          @parent = new Container null, [ @master ]
           @parent.factory 'parent', (master) -> master + 'b'
+          @parents = [ @parent ]
         When -> @subject.factory 'foo', (parent) -> parent + 'c'
+        When getFoo
+        Then -> @result == 'abc'
+
+      describe '- multiple parents', ->
+        Given ->
+          @parent1 = new Container()
+          @parent1.value 'p1Module', 'a'
+          @parent2 = new Container()
+          @parent2.value 'p2Module', 'b'
+          @parents = [ @parent1, @parent2 ]
+        When -> @subject.factory 'foo', (p1Module, p2Module) -> p1Module + p2Module + 'c'
         When getFoo
         Then -> @result == 'abc'
 
@@ -180,4 +193,5 @@ describe 'container', ->
       Given ->
         @parent = new Container()
         @parent.factory 'loadMe', => @parentLoaded = true
+        @parents = [ @parent ]
       Then -> @parentLoaded == true
