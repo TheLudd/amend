@@ -4,7 +4,11 @@ describe 'loadConfig', ->
   Given -> @basePath = process.cwd()
   When ->
     try
-      @di = loadConfig @config, @basePath, @opts, @parent
+      @di = loadConfig
+        config: @config
+        basePath: @basePath
+        opts: @opts
+        parent: @parent
     catch e
       @e = e
   Then -> @e?
@@ -30,7 +34,10 @@ describe 'loadConfig', ->
     Given ->
       @config = modules: bar: require: './test/e2e/depending-factory'
       @parentConfig = modules: foo: require: './test/e2e/simple-factory'
-      @parent = loadConfig @parentConfig, @basePath, @opts
+      @parent = loadConfig
+        config: @parentConfig
+        basePath: @basePath
+        opts: @opts
     When -> @result = @di.get 'bar'
     Then -> @result == 'foobar'
 
