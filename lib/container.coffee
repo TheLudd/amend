@@ -42,11 +42,9 @@ module.exports = class Container
     if @_registrations[name]?
       return 'local'
     else
-      i = 0
       for p in @_parents
-        if p._registeredAt(name) == 'local'
-          parentIndex = i
-        i++
+        if p._registeredAt(name)?
+          parentIndex = _i
       return parentIndex
 
   isRegistered: (name) -> @_registeredAt(name) != undefined

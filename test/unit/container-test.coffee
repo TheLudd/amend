@@ -104,9 +104,18 @@ describe 'container', ->
           @parent = new Container null, [ @master ]
           @parent.factory 'parent', (master) -> master + 'b'
           @parents = [ @parent ]
-        When -> @subject.factory 'foo', (parent) -> parent + 'c'
-        When getFoo
-        Then -> @result == 'abc'
+
+        describe '- nested parent dependencies', ->
+          When -> @subject.factory 'foo', (parent) -> parent + 'c'
+          When getFoo
+          Then -> @result == 'abc'
+
+        describe '- get from nested parent', ->
+          When -> @result = @subject.get 'master'
+          Invariant -> @result == 'a'
+
+          describe '(cached)', ->
+            When -> @resutl = @subject.get 'master'
 
       describe '- multiple parents', ->
         Given ->
@@ -117,7 +126,10 @@ describe 'container', ->
           @parents = [ @parent1, @parent2 ]
         When -> @subject.factory 'foo', (p1Module, p2Module) -> p1Module + p2Module + 'c'
         When getFoo
-        Then -> @result == 'abc'
+        Invariant -> @result == 'abc'
+
+        describe '- cached fetch', ->
+          When getFoo
 
   describe '#value', ->
     Given -> @value = 'hey'
