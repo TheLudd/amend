@@ -8,7 +8,7 @@ describe 'loadConfig', ->
         config: @config
         basePath: @basePath
         opts: @opts
-        parent: @parents
+        parents: @parents
     catch e
       @e = e
   Then -> @e?

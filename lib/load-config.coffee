@@ -25,9 +25,9 @@ getPath = (moduleConfig) ->
     return moduleConfig.require
 
 module.exports = (options) ->
-  { config, basePath, opts, parent } = options
+  { config, basePath, opts, parents } = options
   throw new TypeError('No configuration was provided for loadConfig') unless config?
-  di = new Container opts, parent
+  di = new Container opts, parents
   modules = config.modules || {}
 
   Object.keys(modules).forEach (key) ->
