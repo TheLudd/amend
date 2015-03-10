@@ -33,10 +33,12 @@ module.exports = class Container
     throwNotFound name unless @isRegistered name
     registeredAt = @_registeredAt(name)
     if registeredAt == 'local'
-      @_instantiate name unless @_instances[name]?
+      @_instantiate name unless @_isInstantiated(name)
       return @_instances[name]
     else
       return @_parents[registeredAt].get(name)
+
+  _isInstantiated: (name) -> Object.keys(@_instances).indexOf(name) != -1
 
   _registeredAt: (name) ->
     if @_registrations[name]?
@@ -58,7 +60,7 @@ module.exports = class Container
   loadAll: ->
     p.loadAll() for p in @_parents
     Object.keys(@_registrations).forEach (name) =>
-      @_instantiate name unless @_instances[name]?
+      @_instantiate name unless @_isInstantiated(name)
 
   _register: (type, name, value) -> @_registrations[name] = value: value, type: type
 
@@ -77,7 +79,7 @@ module.exports = class Container
     dependencies = args.map (depName) =>
       registeredAt = @_registeredAt(depName)
       if registeredAt == 'local'
-        @_instances[depName] || @_instantiate depName, name
+        if @_isInstantiated(depName) then @_instances[depName] else @_instantiate depName, name
       else if registeredAt?
         @_parents[registeredAt].get(depName)
       else

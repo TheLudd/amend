@@ -3,9 +3,16 @@ ModuleNotFound = require '../../lib/ModuleNotFound'
 
 describe 'container', ->
 
+  getFoo = ->
+    try
+      @result = @subject.get 'foo'
+    catch e
+      @error = e
+
   When -> @subject = new Container @conf, @parents
 
   describe '#factory', ->
+
     When ->
       try
         @subject.factory 'foo', @factory
@@ -21,12 +28,6 @@ describe 'container', ->
       And -> @e.message == 'A factory must be a function'
 
     describe 'valid input', ->
-      getFoo = ->
-        try
-          @result = @subject.get 'foo'
-        catch e
-          @error = e
-
       describe 'no dependency function', ->
         Given -> @factory = -> 'fooValue'
         When getFoo
@@ -141,15 +142,33 @@ describe 'container', ->
       Then -> @subject.isRegistered('foo') == true
 
   describe '#get', ->
-    When ->
-      try
-        @result = @subject.get @module
-      catch e
-        @e = e
+    Given -> @counter = 0
+    When -> @subject.factory 'foo', =>
+      @counter++
+      return undefined
 
-    describe 'nonExisting', ->
-      Given -> @module = 'nonExisting'
+    describe '- nonExisting', ->
+      When ->
+        try
+          @result = @subject.get 'nonExisting'
+        catch e
+          @e = e
       Then -> @e.module == 'nonExisting'
+
+    describe '- existing', ->
+      When getFoo
+      Invariant -> @counter == 1
+
+      describe '- only runs the factory once', ->
+        When getFoo
+
+      describe '- does not run again in loadAll', ->
+        When -> @subject.loadAll()
+
+      describe '- only instantiates dependencies once', ->
+        When ->
+          @subject.factory 'bar', (foo) ->
+          @subject.get 'bar'
 
   describe '#class', ->
     When ->
