@@ -26,7 +26,8 @@
     "dist/",
     "lib/",
     "browserify.js",
-    "index.js"
+    "index.js",
+    "tools.js"
   ],
   "keywords": [
     "di",

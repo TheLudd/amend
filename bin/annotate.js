@@ -12,7 +12,9 @@
 
   conf = require(path);
 
-  di = fromConfig(conf);
+  di = fromConfig({
+    config: conf
+  });
 
   annotate(di, process.stdout);
 
