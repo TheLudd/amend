@@ -10,14 +10,15 @@ or
 npm install amend --save
 ```
 # Current state
-Amend is in alpha mode. The dependency injector works but the project is not fully tested for the full development cycle, i.e work in development mode, packge and deploy to production. This is expected to be done in december 2014 since amend will be developed and used together with a production ready project by then.
+Amend is in beta mode and has been quite stable for a while. It has been battle tested in a enterprise web application project under development where several modules are put together both front and back end. Version 0.3.0 will have some minor changes to the API along with a few new features. After that not many changes are expected and version 1.0.0 should be released during the spring or early summer of 2015.
+
 
 # environments
   * Works in node
   * Works minified by using amend-annotate, see section tools for more information.
 
 # introduction
-Instead of forcing you to use code specific to this library when creating your components, amend lets you write components using the regular ```require``` and ```module.exports``` function and variable. Depenencies between the components are wired up through a configuration object. This means that unlike many other di frameworks, no variables specific for amend are introduced in your code. 
+Instead of forcing you to use code specific to this library when creating your components, amend lets you write components using the regular ```require``` and ```module.exports``` function and variable. Depenencies between the components are wired up through a configuration object. This means that unlike many other di frameworks, no variables specific for amend are introduced in your code.
 
 The configuration is a normal javascript object that maps names of components to their path for require. A module can be one of these three types:
 ### factory
@@ -76,7 +77,7 @@ When using "short" notation the module is assumed to be a factory if it returns 
 ## new Container(options)
 Manually create a container. This is not the recommended way to do it as a container is created and populated with ```amend.fromConfig```. The container constuctor is required by ```reuire('amend').Container```.
 
-## container.get(name) 
+## container.get(name)
 Returns the component with the specified name. If the component is a factory or a class it will be initialized on the first call to get. On subsquent calls the initialized component will be returned.
 
 ## container.initializeAll()
