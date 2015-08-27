@@ -1,4 +1,7 @@
 # amend
+
+[![Build Status](https://travis-ci.org/TheLudd/mocha-gwt.svg)](https://travis-ci.org/TheLudd/mocha-gwt)
+
 Amend is a dependency-injection framework for use in node and in the browser. Amend aims to have no impact on the code you write and to minimize configuration as much as possible.
 
 ## installation
