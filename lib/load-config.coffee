@@ -24,11 +24,19 @@ getPath = (moduleConfig) ->
   else
     return moduleConfig.require
 
+clearCache = (modules) ->
+  Object.keys(modules).forEach (key) ->
+    moduleConfig = modules[key]
+    path = getPath moduleConfig
+    delete require.cache[path]
+
 module.exports = (options) ->
   { config, basePath, opts, parents } = options
   throw new TypeError('No configuration was provided for loadConfig') unless config?
   di = new Container opts, parents
   modules = config.modules || {}
+
+  clearCache(modules) if opts?.clearCache == true
 
   Object.keys(modules).forEach (key) ->
     moduleConfig = modules[key]
