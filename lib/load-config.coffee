@@ -24,11 +24,12 @@ getPath = (moduleConfig) ->
   else
     return moduleConfig.require
 
-clearCache = (modules) ->
+clearCache = (modules, basePath) ->
   Object.keys(modules).forEach (key) ->
     moduleConfig = modules[key]
     path = getPath moduleConfig
-    delete require.cache[path]
+    fullPath = getFullPath path, basePath
+    delete require.cache[require.resolve(fullPath)]
 
 module.exports = (options) ->
   { config, basePath, opts, parents } = options
@@ -36,7 +37,7 @@ module.exports = (options) ->
   di = new Container opts, parents
   modules = config.modules || {}
 
-  clearCache(modules) if opts?.clearCache == true
+  clearCache(modules, basePath) if options?.clearCache == true
 
   Object.keys(modules).forEach (key) ->
     moduleConfig = modules[key]
