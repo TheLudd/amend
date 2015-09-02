@@ -250,6 +250,11 @@ describe 'container', ->
       When callShutdown
       Then ->
 
+    describe '-with factories returning undefined', ->
+      When -> @subject.factory 'foo', -> return undefined
+      When callShutdown
+      Then ->
+
     describe '- with shutdowns in parent', ->
       Given createShutdownable
       Given ->

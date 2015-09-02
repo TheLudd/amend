@@ -64,7 +64,7 @@ module.exports = class Container
 
   shutdown: ->
     Object.keys(@_instances).forEach (key) =>
-      @_instances[key].__amendShutdown?()
+      @_instances[key]?.__amendShutdown?()
     p.shutdown() for p in @_parents
 
   _register: (type, name, value) -> @_registrations[name] = value: value, type: type
