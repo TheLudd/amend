@@ -62,6 +62,11 @@ module.exports = class Container
     Object.keys(@_registrations).forEach (name) =>
       @_instantiate name unless @_isInstantiated(name)
 
+  shutdown: ->
+    Object.keys(@_instances).forEach (key) =>
+      @_instances[key].__amendShutdown?()
+    p.shutdown() for p in @_parents
+
   _register: (type, name, value) -> @_registrations[name] = value: value, type: type
 
   _instantiate: (name, parent) ->

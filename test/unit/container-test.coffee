@@ -226,3 +226,35 @@ describe 'container', ->
         @parent.factory 'loadMe', => @parentLoaded = true
         @parents = [ @parent ]
       Then -> @parentLoaded == true
+
+  describe '#shutdown', ->
+    createShutdownable = -> @hasShutdown = __amendShutdown: => @wasShutdown = true
+    callShutdown = ->
+      @subject.loadAll()
+      @subject.shutdown()
+
+    describe '- with no modules', ->
+      When callShutdown
+      Then ->
+
+    describe '- with shutdownable modules', ->
+      Given createShutdownable
+      When -> @subject.value 'shutMe', @hasShutdown
+      When callShutdown
+      Then -> @wasShutdown == true
+
+    describe '- with non shutdownable modules', ->
+      Given ->
+        @noShutdown = someKey: 'someVal'
+      When -> @subject.value 'dontShutMe', @noShutdown
+      When callShutdown
+      Then ->
+
+    describe '- with shutdowns in parent', ->
+      Given createShutdownable
+      Given ->
+        parent = new Container
+        parent.value 'shutMe', @hasShutdown
+        @parents = [ parent ]
+      When callShutdown
+      Then -> @wasShutdown == true
