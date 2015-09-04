@@ -263,3 +263,21 @@ describe 'container', ->
         @parents = [ parent ]
       When callShutdown
       Then -> @wasShutdown == true
+
+  describe '#getRegistrations', ->
+    When -> @subject.value 'foo', 'bar'
+    getRegistrations = -> @result = @subject.getRegistrations()
+
+    describe '- single container', ->
+      When getRegistrations
+      Then -> @result.should.deep.equal foo: value: 'bar', type: 'value'
+
+    describe '- with parent container', ->
+      Given ->
+        parent = new Container
+        parent.value 'baz', 'qux'
+        @parents = [ parent ]
+      When getRegistrations
+      Then -> @result.should.deep.equal
+        foo: value: 'bar', type: 'value'
+        baz: value: 'qux', type: 'value'

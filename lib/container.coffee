@@ -51,6 +51,17 @@ module.exports = class Container
 
   isRegistered: (name) -> @_registeredAt(name) != undefined
 
+  getRegistrations: ->
+    if @_parents.length == 0
+      return @_registrations
+
+    all = (p.getRegistrations() for p in @_parents)
+    all.push @_registrations
+    all.reduce (acc, item) ->
+      Object.keys(item).forEach (key) -> acc[key] = item[key]
+      return acc
+    , {}
+
   getArguments: (name) ->
     if @_modules[name]?
       @_modules[name]
