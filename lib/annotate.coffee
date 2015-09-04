@@ -1,7 +1,7 @@
 module.exports = (container) ->
   return {} unless container?
 
-  modules = container._registrations
+  modules = container.getRegistrations()
   noValues = (i) -> modules[i].type != 'value'
 
   return Object.keys(modules).filter(noValues).reduce (sum, name) ->
