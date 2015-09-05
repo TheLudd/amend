@@ -56,3 +56,13 @@ describe 'annotate', ->
         baz: [ 'foo', 'bar' ]
         qux: [ 'x', 'y', 'z' ]
         abc: [ 'qux', 'foo' ]
+
+  describe 'with parent', ->
+    Given ->
+      parent = new Container()
+      parent.factory 'foo', (bar) ->
+      @container = new Container(null, [parent])
+      @container.factory 'baz', (foo) ->
+    Then resultIs
+      foo: [ 'bar' ]
+      baz: [ 'foo' ]
