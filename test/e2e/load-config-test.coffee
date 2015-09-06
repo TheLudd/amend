@@ -42,6 +42,17 @@ describe 'loadConfig', ->
     When -> @result = @di.get 'bar'
     Then -> @result == 'foobar'
 
+  describe 'parent from config file', ->
+    Given ->
+      @config =
+        parents: [
+          { nodeModule: 'fake1', configFile: 'config.json' }
+        ]
+        modules:
+          dependsOnFake1: './test/e2e/depends-on-fake1'
+    When -> @result = @di.get 'dependsOnFake1'
+    Then -> @result == 'received fake1'
+
   describe 'one value', ->
     Given -> @config = modules:
       val: require: './test/e2e/value'
