@@ -1,14 +1,20 @@
 Container = require './container'
+normalize = require('path').normalize
 
 isRelative = (path) -> path.indexOf('.') == 0
 
+joinPaths = (arr) -> arr.join '/'
+
 getFullPath = (path, basePath) ->
   if window?
-    return path
+    if isRelative(path) && basePath != ''
+      normalize(joinPaths([ basePath, path]))
+    else
+      path
   else if isRelative path
-    return [ basePath, path ].join '/'
+    joinPaths [ basePath, path ]
   else
-    return [ basePath, 'node_modules', path ].join '/'
+    joinPaths [ basePath, 'node_modules', path ]
 
 evaluateType = (moduleConfig, module) ->
   return moduleConfig.type if moduleConfig.type?
@@ -55,7 +61,7 @@ module.exports = (options) ->
   modules = config.modules || {}
   configParents = config.parents || []
   configParents.forEach (p) ->
-    parentModules = require [ p.nodeModule, p.configFile ].join '/'
+    parentModules = require joinPaths [ p.nodeModule, p.configFile ]
     populateContainer(di, parentModules.modules, p.nodeModule)
   populateContainer(di, modules, basePath)
 
