@@ -35,5 +35,8 @@
     "dependency injection"
   ],
   "author": "Ludwig Magnusson",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "ramda": "^0.17.1"
+  }
 }
