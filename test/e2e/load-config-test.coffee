@@ -46,7 +46,7 @@ describe 'loadConfig', ->
     Given ->
       @config =
         parents: [
-          { nodeModule: 'fake1', configFile: 'config.json' }
+          { nodeModule: 'fake1', configFile: 'fake1-config.json' }
         ]
         modules:
           dependsOnFake1: './test/e2e/depends-on-fake1'

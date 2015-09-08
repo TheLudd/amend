@@ -1,52 +1,27 @@
 var R = require('ramda')
 var normalize = require('path').normalize;
-
-function isLocal(path) {
-  return path[0] === '.';
-}
-
-function getRequrePath(val) {
-  if (typeof val === 'string') {
-    return val;
-  } else {
-    return val.require;
-  }
-}
+var findModule = require('./dist/find-module');
+var getConfPaths = require('./dist/get-conf-paths')(findModule.path, findModule.instance);
 
 function addAmendModule(b, opts, nodeModule) {
-  function shouldInclude(key, path) {
+  function shouldInclude(isLocal, key) {
     var includeExternal = opts.includeExternal || [];
-    return isLocal(path) ||
+    return isLocal ||
       bundleExternal ||
       includeExternal.indexOf(key) !== -1;
   }
 
   var bundleExternal = opts.bundleExternal !== false;
-  var modules = opts.config.modules;
-  var parents = opts.config.parents || [];
-
-  parents.forEach(function(p) {
-    addParent(b, opts, p);
-  })
-
-  Object.keys(modules).forEach(function(key) {
-    var modulePath = getRequrePath(modules[key]);
-    if (shouldInclude(key, modulePath)) {
-      if (nodeModule) {
-        modulePath = normalize([ nodeModule, modulePath ].join('/'))
-      }
-      b.require(modulePath);
+  var paths = getConfPaths(opts.baseDir, opts.config)
+  paths.forEach(function(obj) {
+    var key = obj.key;
+    var path = obj.path;
+    var isLocal = obj.isLocal;
+    if (shouldInclude(isLocal, key)) {
+      b.require(path);
     }
   });
-}
 
-function addParent(b, opts, parentConf) {
-  var base = process.cwd();
-  var configFilePath = [ parentConf.nodeModule, parentConf.configFile ].join('/');
-  var p = require(configFilePath);
-  var parentOpts = R.assoc('config', p, opts)
-  b.require(configFilePath)
-  addAmendModule(b, parentOpts, parentConf.nodeModule)
 }
 
 module.exports = function(b, opts) {

@@ -15,7 +15,7 @@ throwNotFound = (name, parent) ->
 
 module.exports = class Container
   constructor: (conf = {}, @_parents = []) ->
-    @_modules = conf.modules || {}
+    @_modules = conf.modules || conf
     @_registrations = {}
     @_instances = {}
 

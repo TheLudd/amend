@@ -46,8 +46,15 @@ describe 'container', ->
         When getFoo
         Then -> @result == 4
 
-      describe 'with specified dependencies', ->
+      describe 'with specified dependencies - old style', ->
         Given -> @conf = modules: foo: [ 'bar' ]
+        Given -> @factory = (a) -> a * 2
+        When -> @subject.value 'bar', 2
+        When -> @result = @subject.get 'foo'
+        Then -> @result = 4
+
+      describe 'with specified dependencies', ->
+        Given -> @conf = foo: [ 'bar' ]
         Given -> @factory = (a) -> a * 2
         When -> @subject.value 'bar', 2
         When -> @result = @subject.get 'foo'
