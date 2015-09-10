@@ -14,12 +14,12 @@ or
 npm install amend --save
 ```
 # Current state
-Amend is in beta mode and has been quite stable for a while. It has been battle tested in a enterprise web application project under development where several modules are put together both front and back end. Version 0.3.0 will have some minor changes to the API along with a few new features. After that not many changes are expected and version 1.0.0 should be released during the spring or early summer of 2015.
-
+Amend is battle tested in an enterprise application both in node and the browser and it is production ready.
 
 # environments
   * Works in node
-  * Works minified by using amend-annotate, see section tools for more information.
+  * Works in the browser
+  * Works minified
 
 # introduction
 Instead of forcing you to use code specific to this library when creating your components, amend lets you write components using the regular ```require``` and ```module.exports``` function and variable. Depenencies between the components are wired up through a configuration object. This means that unlike many other di frameworks, no variables specific for amend are introduced in your code.
@@ -47,14 +47,15 @@ module.exports = //returned function/object
 ```
 
 # API
-## amend.fromConfig(config, basePath, options)
-Returns a di container with modules loaded acording to the specified configuration.
+## amend.fromNodeConfig(opts)
+Returns a di container with modules loaded acording to the specified configuration. The `opts` object can have these keys:
 
-```config``` is a normal javascript object that contains the key ```modules``` which keys are the names of the modules. A module can have two configuration options.
-```require``` is the path by which the module will be required. Require paths can be realtive or to an installed dependency, relative paths should be relative to the root directory of the poject.
-```type```  is either "factory", "class" or "value".
+### config (required)
+`config` is a javascript object that contains the key `modules` in which the keys are the names of the modules. A module can have two configuration options.
+`require` is the path by which the module will be required. Require paths can be realtive or to an installed dependency, relative paths should be relative to the root directory of the poject.
+`type`  is either "factory", "class" or "value".
 ```javascript
-  var conf = {
+  var config = {
     modules: {
       foo: {
          require: './lib/foo',
@@ -71,12 +72,27 @@ It is also possible to use "short" notation where only the path is configured:
     }
   }
 ```
-When using "short" notation the module is assumed to be a factory if it returns a function, otherwise it is treated as a value. This means that it is only neccesary to use "long" notation when registering a class or when the module consists of a function that should be treated as a value.
+When using "short" notation the module is assumed to be a factory if it returns a function, otherwise it is treated as a value. This means that it is only neccesary to use "long" notation when registering a class or when the module consists of a function that should be treated as a value. Note that external dependencies are by default treated as values.
 
+`config` may also contain parent listing. A parent is another node module that exposes an amend module. Each parent needs to specify the name of the node module in which it lives, and a path
+to a config file. The path should be relative to the parent root.
+```
+  var config = {
+    parents: [{
+       nodeModule: 'parent-module',
+       configFile: './path/to/parent/config'
+    }]
+  }
+```
 
-```basePath``` should be the root dir of the project using amend.
+### baseDir (required)
+The root directory of the project creating the amend container. Probably derived by using `process.cwd()`
 
-```options``` is passed to the created container.
+### annotations
+See annotate below.
+
+### clearCache
+If set to true the cache of nodes `require` object will be cleared. Useful in some development enviroments.
 
 ## new Container(options)
 Manually create a container. This is not the recommended way to do it as a container is created and populated with ```amend.fromConfig```. The container constuctor is required by ```reuire('amend').Container```.
@@ -84,7 +100,7 @@ Manually create a container. This is not the recommended way to do it as a conta
 ## container.get(name)
 Returns the component with the specified name. If the component is a factory or a class it will be initialized on the first call to get. On subsquent calls the initialized component will be returned.
 
-## container.initializeAll()
+## container.loadAll()
 All components are lazy loaded, only initialized when they are required. This method will initialize all modules however. If there are any missmatching dependencies in the container, a call to this method will detect them by throwing an error.
 
 ## container.factory(name, factoryFn)
@@ -137,7 +153,7 @@ A little dice game:
 ```
 # tools
 ## annotate
-Annotate takes an amend configuration and produces an output which describes the dependencies between the different components. This output can then be used when creating a container in a minified enviroment where the names of dependencies have been obfuscated. Annotate is included as an executable and can thus be accessed through adding an npm script, through the ```node_modules/.bin``` folder or if amend is installed globally. To execute the binary, run:
+Annotate takes an amend container and produces an output which describes the dependencies between the different components. This output can then be used when creating a container in a minified enviroment where the names of dependencies have been obfuscated. Annotate is included as an executable and can thus be accessed through adding an npm script, through the ```node_modules/.bin``` folder or if amend is installed globally. To execute the binary, run:
 ```bash
 ammend-annotate config.json
 ```
@@ -152,13 +168,15 @@ var out = getMyWriteStream()
 
 annotate(di, out);
 ```
-Use the annotated output when creating your container. If you have written the output to ```./dependencies.json``` then create a container like this:
+Use the annotated output when creating your container. If you have written the output to ```./annotations.json``` then create a container like this:
 ```javascript
 var amend = require('amend');
 var config = require('./config.json');
-var dependencies = require('./dependencies.json');
+var annotations = require('./annotations.json');
 var opts = {
-  modules: dependencies
+  config: config,
+  baseDir: ...,
+  annotations: annotations
 };
-var di = amend.fromConfig(config, opts);
+var di = amend.fromNodeConfig(opts);
 ```
