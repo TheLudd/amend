@@ -16,9 +16,8 @@ module.exports = (
       callers = childCallers.concat p.nodeModule
       parentConf = findMoule base, p.configFile, callers
       parentConfPath = findPath base, p.configFile, callers
-      out.push isLocal: true, path: normalize parentConfPath
-      getModulePaths(base, parentConf, callers).forEach (result) ->
-        out.push result
+      out.push isConfig: true, isLocal: true, path: normalize parentConfPath
+      out = out.concat getModulePaths(base, parentConf, callers)
     Object.keys(modules).map (key) ->
       mod = modules[key]
       path = getPath(mod)
