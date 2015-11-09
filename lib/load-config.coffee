@@ -49,10 +49,10 @@ populateContainer = (di, modules, basePath) ->
     catch e
       module = require path
     type = evaluateType moduleConfig, module
-    if type == 'factory'
-      di.factory key, module
+    if type == 'spread'
+      di.spread module
     else
-      di.value key, module
+      di[type] key, module
 
 module.exports = (options) ->
   { config, basePath, opts, parents } = options

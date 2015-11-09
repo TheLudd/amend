@@ -1,4 +1,6 @@
 loadConfig = require '../../lib/load-config'
+R = require 'ramda'
+
 describe 'loadConfig', ->
 
   Given -> @basePath = process.cwd()
@@ -103,3 +105,14 @@ describe 'loadConfig', ->
         mocha: 'mocha'
     When -> @result = @di.get 'mocha'
     Then -> typeof @result == 'function'
+
+  describe 'with spread', ->
+    Given ->
+      @basePath = process.cwd()
+      @config =
+        modules:
+          R:
+           require: 'ramda'
+           type: 'spread'
+    Then -> @di.isRegistered('map')
+    And -> @di.get('map') == R.map

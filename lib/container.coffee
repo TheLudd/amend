@@ -29,6 +29,8 @@ module.exports = class Container
     throw new TypeError 'A constructor must be a function' unless constructor instanceof Function
     @_register 'class', name, constructor
 
+  spread: (obj) -> @value(k, v) for k, v of obj
+
   get: (name) ->
     throwNotFound name unless @isRegistered name
     registeredAt = @_registeredAt(name)

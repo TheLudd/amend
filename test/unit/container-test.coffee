@@ -288,3 +288,12 @@ describe 'container', ->
       Then -> @result.should.deep.equal
         foo: value: 'bar', type: 'value'
         baz: value: 'qux', type: 'value'
+
+  describe '#spread', ->
+    Given ->
+      @input =
+        foo: 'fooValue'
+        bar: 'barValue'
+    When -> @subject.spread(@input)
+    Then -> @subject.get('foo') == 'fooValue'
+    And -> @subject.get('bar') == 'barValue'

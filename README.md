@@ -46,6 +46,10 @@ Values are simpler than factories and constructors, they cannot have dependencie
 module.exports = //returned function/object
 ```
 
+### spread
+If the type of a module is set to spread, the module is expected to be an object. Each key/value pair in the object will be registered as values in the container. This can be used to avoid namespacing of dependencies if so desired.
+Note that if several modules are imported this way with the same keys in their object, the first key will be overwritten by the latter.
+
 # API
 ## amend.fromNodeConfig(opts)
 Returns a di container with modules loaded acording to the specified configuration. The `opts` object can have these keys:
