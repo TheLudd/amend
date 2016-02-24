@@ -24,7 +24,7 @@ describe 'getConfPaths', ->
     @result = @subject('root', conf)
   Then -> @result.should.deep.equal [
     { isLocal: true, isConfig: true, path: 'root/parent1/parent-config.json' }
-    { isLocal: false, key: 'bee', path: 'root/parent1/boo' }
-    { isLocal: false, key: 'foo', path: 'root/bar' }
-    { isLocal: true, key: 'baz', path: 'root/qux' }
+    { isLocal: false, key: 'bee', path: 'root/parent1/boo', registeredPath: 'boo', module: 'boo' }
+    { isLocal: false, key: 'foo', path: 'root/bar', registeredPath: 'bar', module: 'bar' }
+    { isLocal: true, key: 'baz', path: 'root/qux', registeredPath: './qux', module: require: './qux' }
   ]

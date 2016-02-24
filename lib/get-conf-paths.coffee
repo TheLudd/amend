@@ -20,10 +20,13 @@ module.exports = (
       out = out.concat getModulePaths(base, parentConf, callers)
     Object.keys(modules).map (key) ->
       mod = modules[key]
-      path = getPath(mod)
+      registeredPath = getPath(mod)
+      fullPath = normalize findPath(base, registeredPath, childCallers)
       out.push
         key: key
-        path: normalize findPath(base, path, childCallers)
-        isLocal: isLocal(path)
+        path: fullPath
+        registeredPath: registeredPath
+        isLocal: isLocal(registeredPath)
+        module: mod
 
     return out
