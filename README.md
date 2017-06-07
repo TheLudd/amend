@@ -1,5 +1,7 @@
 # amend
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/TheLudd/amend.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/TheLudd/amend.svg)](https://travis-ci.org/TheLudd/amend)
 [![npm version](https://badge.fury.io/js/amend.svg)](http://badge.fury.io/js/amend)
 
