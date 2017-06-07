@@ -11,11 +11,11 @@
     "url": "https://github.com/TheLudd/amend"
   },
   "devDependencies": {
-    "chai": "^3.2.0",
+    "chai": "^4.0.2",
     "coffee-script": "^1.9.0",
-    "mocha": "^2.0.0",
+    "mocha": "^3.4.2",
     "mocha-gwt": "^0.2.0",
-    "ramda": "^0.15.1"
+    "ramda": "^0.24.1"
   },
   "scripts": {
     "prepublish": "coffee -o dist -cb lib",
