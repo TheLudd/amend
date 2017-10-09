@@ -15,7 +15,7 @@
     "coffee-script": "^1.9.0",
     "mocha": "^3.4.2",
     "mocha-gwt": "^0.2.0",
-    "ramda": "^0.24.1"
+    "ramda": "^0.25.0"
   },
   "scripts": {
     "prepublish": "coffee -o dist -cb lib",
