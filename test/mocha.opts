@@ -2,3 +2,4 @@
 --require coffee-script/register
 --recursive
 --reporter dot
+--watch-extensions coffee
