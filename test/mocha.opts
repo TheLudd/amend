@@ -1,5 +1,6 @@
 --ui mocha-gwt
 --require coffee-script/register
+--require source-map-support
 --recursive
 --reporter dot
 --watch-extensions coffee
