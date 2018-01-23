@@ -17,10 +17,15 @@ tryFind = (base, fileName, callers) ->
     instance: require fileName
     path: fileName
   catch e
-    try
-      findModule(base, fileName, callers)
-    catch e2
-      throw new CouldNotLoad base, fileName, callers
+    if e.code == 'MODULE_NOT_FOUND'
+      try
+        findModule(base, fileName, callers)
+      catch e2
+        throw new CouldNotLoad base, fileName, callers
+    else
+      instance: {}
+      path: makePath base, fileName, callers
+
 
 exports.instance = (base, fileName, callers) ->
   tryFind(base, fileName, callers).instance

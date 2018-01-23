@@ -15,8 +15,9 @@ describe 'findModule', ->
 
   verifyResult = ->
     (@base + '/' + @expectedPath).should.equal @resultPath
-    expectedInstance = req @expectedPath
-    expectedInstance.should.deep.equal @resultInstance
+    unless @expectedInstance?
+      @expectedInstance = req @expectedPath
+    @expectedInstance.should.deep.equal @resultInstance
 
   afterBlock ->
     if @error?
@@ -72,3 +73,11 @@ describe 'findModule', ->
       @fileName = 'nonExisting'
       @callers = [ 'fake2', 'fake3' ]
     Then -> @error?
+
+  describe 'troublesome module', ->
+    Given ->
+      @expectedInstance = {}
+      @expectedPath = 'node_modules/pikaday'
+      @fileName = 'pikaday'
+      @callers = []
+    Then verifyResult
