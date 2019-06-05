@@ -38,7 +38,6 @@ clearCache = (modules, basePath) ->
     delete require.cache[require.resolve(fullPath)]
 
 populateContainer = (di, modules, basePath) ->
-  clearCache(modules, basePath) if options?.clearCache == true
 
   Object.keys(modules).forEach (key) ->
     moduleConfig = modules[key]
@@ -57,6 +56,7 @@ populateContainer = (di, modules, basePath) ->
 module.exports = (options) ->
   { config, basePath, opts, parents } = options
   throw new TypeError('No configuration was provided for loadConfig') unless config?
+  clearCache(modules, basePath) if options?.clearCache == true
   di = new Container opts, parents
   modules = config.modules || {}
   configParents = config.parents || []
