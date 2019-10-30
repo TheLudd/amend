@@ -20,7 +20,9 @@
     "source-map-support": "^0.5.2"
   },
   "scripts": {
-    "prepublish": "coffee -o dist -cb lib",
+    "clean": "rm -rf dist",
+    "transpile": "coffee -o dist -cb lib",
+    "prepublishOnly": "yarn clean && yarn transpile",
     "test": "mocha test/**/*.coffee"
   },
   "files": [
