@@ -26,9 +26,18 @@ tryFind = (base, fileName, callers) ->
       instance: {}
       path: makePath base, fileName, callers
 
+resolveAsNode = (base, fileName, callers) ->
+  paths = callers.map (item) -> "#{base}/node_modules/#{item}"
+  paths.push(base)
+  fullPath = require.resolve(fileName, { paths: paths })
+  return fullPath.replace(/\.js$/, '')
 
 exports.instance = (base, fileName, callers) ->
+  if typeof window == 'undefined'
+    return require(resolveAsNode(base, fileName, callers))
   tryFind(base, fileName, callers).instance
 
 exports.path = (base, fileName, callers) ->
+  if typeof window == 'undefined'
+    return resolveAsNode(base, fileName, callers)
   tryFind(base, fileName, callers).path

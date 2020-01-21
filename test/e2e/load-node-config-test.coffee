@@ -1,6 +1,6 @@
 loadNodeConfig = require '../../lib/load-node-config'
 
-describe 'loadNodeConfig', ->
+xdescribe 'loadNodeConfig', ->
 
   config =
     parents: [

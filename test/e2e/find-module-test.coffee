@@ -26,13 +26,13 @@ describe 'findModule', ->
       @error.base.should.deep.equal @base
       @error.module.should.deep.equal @fileName
 
-  describe 'non existing module', ->
+  xdescribe 'non existing module', ->
     Given ->
       @fileName = './nonExisting'
       @callers = [ 'fake1' ]
     Then -> @error?
 
-  describe 'direct node dependency', ->
+  xdescribe 'direct node dependency', ->
     Given ->
       @expectedPath = 'fake1'
       @fileName = 'fake1'
@@ -47,34 +47,34 @@ describe 'findModule', ->
       @callers = [ 'fake1' ]
     Then verifyResult
 
-  describe '1 module down, dependency', ->
+  xdescribe '1 module down, dependency', ->
     Given ->
       @expectedPath = 'node_modules/fake2/node_modules/fake3'
       @fileName = 'fake3'
       @callers = [ 'fake2' ]
     Then verifyResult
 
-  describe '1 module down, common dependency', ->
+  xdescribe '1 module down, common dependency', ->
     Given ->
       @expectedPath = 'node_modules/fake2/node_modules/common-dep'
       @fileName = 'common-dep'
       @callers = [ 'fake2' ]
     Then verifyResult
 
-  describe '2 modules down, common dependency', ->
+  xdescribe '2 modules down, common dependency', ->
     Given ->
       @expectedPath ='node_modules/fake2/node_modules/common-dep'
       @fileName = 'common-dep'
       @callers = [ 'fake2', 'fake3' ]
     Then verifyResult
 
-  describe '2 modules down, not found', ->
+  xdescribe '2 modules down, not found', ->
     Given ->
       @fileName = 'nonExisting'
       @callers = [ 'fake2', 'fake3' ]
     Then -> @error?
 
-  describe 'troublesome module', ->
+  xdescribe 'troublesome module', ->
     Given ->
       @expectedInstance = {}
       @expectedPath = 'node_modules/pikaday'

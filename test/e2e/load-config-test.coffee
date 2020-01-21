@@ -84,7 +84,7 @@ describe 'loadConfig', ->
     When -> @result = @di.get 'foo'
     Then -> @result == 'fooValue'
 
-  describe 'node_module', ->
+  xdescribe 'node_module', ->
     Given -> @config = modules:
       m: 'mocha'
     When -> @result = @di.get 'm'
