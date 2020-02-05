@@ -1,10 +1,10 @@
 { dirname } = require('path')
-{ chain, append, mergeAll } = require 'ramda'
+{ chain, identity, append, map, mergeAll } = require 'ramda'
 createAnnotation = require './create-annotation'
 
 annotateConfig = (cwd, config, moduleName = '') ->
   { parents = [] } = config
-  parentAnnotations = chain (p) ->
+  parentAnnotations = map (p) ->
     { nodeModule, configFile } = p
     parentPath = require.resolve("#{nodeModule}/#{configFile}", paths: [ cwd ])
     moduleDir = dirname require.resolve("#{nodeModule}/package.json", paths: [ cwd ])
