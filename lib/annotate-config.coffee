@@ -2,7 +2,7 @@
 { chain, append, mergeAll } = require 'ramda'
 createAnnotation = require './create-annotation'
 
-module.exports = (cwd, config, moduleName = '') ->
+annotateConfig = (cwd, config, moduleName = '') ->
   { parents = [] } = config
   parentAnnotations = chain (p) ->
     { nodeModule, configFile } = p
@@ -14,3 +14,5 @@ module.exports = (cwd, config, moduleName = '') ->
 
   configAnnotations = createAnnotation cwd, config
   return Promise.all(append(configAnnotations, parentAnnotations)).then(mergeAll)
+
+module.exports = annotateConfig
