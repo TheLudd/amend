@@ -11,6 +11,5 @@ module.exports = (cwd, config, moduleName = '') ->
   base = join(cwd, moduleName)
   cleanModules = pickBy both(isNotValue, isLocal), modules
   resolvedModules = map(((s) -> require.resolve(s, { paths: [ base ] })), cleanModules)
-  console.log resolvedModules
   return Promise.all(map(analyzeFileDependencies, Object.entries(resolvedModules)))
     .then (s) -> console.log s
