@@ -12,4 +12,3 @@ module.exports = (cwd, config, moduleName = '') ->
   cleanModules = pickBy both(isNotValue, isLocal), modules
   resolvedModules = map(((s) -> require.resolve(s, { paths: [ base ] })), cleanModules)
   return Promise.all(map(analyzeFileDependencies, Object.entries(resolvedModules)))
-    .then (s) -> console.log s
