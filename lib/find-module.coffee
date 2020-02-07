@@ -21,7 +21,7 @@ tryFind = (base, fileName, callers) ->
       try
         findModule(base, fileName, callers)
       catch e2
-        throw new CouldNotLoad base, fileName, callers
+        throw new CouldNotLoad base, fileName, callers, e2
     else
       instance: {}
       path: makePath base, fileName, callers

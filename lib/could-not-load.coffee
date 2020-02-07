@@ -6,7 +6,7 @@ createMessage = (base, module, callers) ->
   , []
 
 class CouldNotLoad extends Error
-  constructor: (@base, @module, @callers) ->
+  constructor: (@base, @module, @callers, @underlyingError) ->
     places = createMessage(@base, @module, @callers)
     @message = "Could not load module #{@module}. Tried in these places:\n#{places.join(',\n')}"
 
