@@ -21,7 +21,7 @@
     "mocha": "^5.0.0",
     "mocha-gwt": "^0.2.0",
     "pikaday": "^1.7.0",
-    "source-map-support": "^0.5.2"
+    "source-map-support": "^0.5.18"
   },
   "scripts": {
     "clean": "rm -rf dist",
