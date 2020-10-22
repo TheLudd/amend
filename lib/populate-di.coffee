@@ -5,11 +5,12 @@ module.exports = (
   findModule
 ) ->
 
-  (di, base, modules, callers) ->
+  (di, opts) ->
+    { base, modules, callers = [] } = opts
     Object.keys(modules).forEach (key) ->
       mod = modules[key]
-      path = getPath mod
-      instance = findModule(base, path, callers)
+      fileName = getPath mod
+      instance = findModule(Object.assign({}, { base, fileName, callers }, opts))
       type = evaluateType(mod, instance)
       di[type] key, instance
     return di

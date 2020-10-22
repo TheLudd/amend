@@ -1,43 +1,60 @@
+{ normalize, join, dirname } = require 'path'
 makePath = require './make-path'
 CouldNotLoad = require './could-not-load'
 
-findModule = (base, fileName, callers) ->
+tryCustomPath = (opts) ->
+  { getCustomPath } = opts
+  fullPath = getCustomPath(opts)
+  instance: require fullPath
+  path: fullPath
+
+findModule = (opts) ->
+  { base, fileName, callers, getCustomPath } = opts
   fullPath =  makePath base, fileName, callers
   try
     instance: require fullPath
     path: fullPath
   catch e
-    if callers.length > 0
+    if getCustomPath?
+      tryCustomPath opts
+    else if callers.length > 0
       findModule base, fileName, callers[0..-2]
     else
       throw e
 
-tryFind = (base, fileName, callers) ->
+tryFind = (opts) ->
+  { base, fileName, callers } = opts
   try
     instance: require fileName
     path: fileName
   catch e
     if e.code == 'MODULE_NOT_FOUND'
       try
-        findModule(base, fileName, callers)
+        findModule(opts)
       catch e2
         throw new CouldNotLoad base, fileName, callers, e
     else
       instance: {}
       path: makePath base, fileName, callers
 
-resolveAsNode = (base, fileName, callers) ->
+resolveAsNode = (opts) ->
+  { base, fileName, callers } = opts
   paths = callers.map (item) -> "#{base}/node_modules/#{item}"
   paths.push(base)
-  fullPath = require.resolve(fileName, { paths: paths })
+  try
+    fullPath = require.resolve(fileName, { paths: paths })
+  catch e
+    alternative = normalize(join(callers..., fileName))
+    fullPath = require.resolve(alternative, { paths: paths })
+
   return fullPath.replace(/\.js$/, '')
 
-exports.instance = (base, fileName, callers) ->
+exports.instance = (opts) ->
   if typeof window == 'undefined'
-    return require(resolveAsNode(base, fileName, callers))
-  tryFind(base, fileName, callers).instance
+    return require(resolveAsNode(opts))
+  tryFind(opts).instance
 
-exports.path = (base, fileName, callers) ->
+exports.path = (opts) ->
   if typeof window == 'undefined'
-    return resolveAsNode(base, fileName, callers)
-  tryFind(base, fileName, callers).path
+    return resolveAsNode(opts)
+  tryFind(opts).path

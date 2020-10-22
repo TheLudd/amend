@@ -8,8 +8,8 @@ describe 'findModule', ->
     @base = process.cwd()
   When ->
     try
-      @resultInstance = findModule.instance(@base, @fileName, @callers)
-      @resultPath = findModule.path(@base, @fileName, @callers)
+      @resultInstance = findModule.instance({ @base, @fileName, @callers })
+      @resultPath = findModule.path({ @base, @fileName, @callers })
     catch e
       @error = e
 

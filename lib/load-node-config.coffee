@@ -15,5 +15,12 @@ module.exports = (opts) ->
 
   di = new Container(annotations)
   config.parents?.forEach (p) ->
-    addParent di, baseDir, p, []
-  populateDi di, baseDir, config.modules, []
+    parentOpts = Object.assign {}, opts,
+      base: baseDir
+      parentSpec: p
+    addParent di, parentOpts
+
+  populateOpts = Object.assign {}, opts,
+    base: baseDir
+    modules: config.modules
+  populateDi di, populateOpts

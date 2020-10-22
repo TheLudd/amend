@@ -4,7 +4,9 @@ Container = require '../../lib/container'
 describe 'populateDi', ->
 
   Given ->
-    @findModuleSpy = (@baseResult, fileName, @callersResult) =>
+    @findModuleSpy = ({ base, fileName, callers }) =>
+      @baseResult = base
+      @callersResult = callers
       if fileName == 'bar'
         'barContent'
       else if fileName == 'boo'
@@ -20,7 +22,12 @@ describe 'populateDi', ->
         require: 'boo'
         type: 'factory'
     @subject = populateDi(@findModuleSpy)
-    @returned = @subject(@di, 'root', modules, 'callers')
+    opts =
+      base: 'root'
+      modules: modules
+      callers: 'callers'
+
+    @returned = @subject(@di, opts)
 
   Invariant -> @baseResult == 'root'
   Invariant -> @callersResult == 'callers'

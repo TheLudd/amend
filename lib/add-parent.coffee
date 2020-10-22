@@ -3,10 +3,20 @@ module.exports = (
   populateDI
 ) ->
 
-  addParent = (di, base, parentSpec, childCallers) ->
+  addParent = (di, opts) ->
+    { parentSpec, childCallers = [], base } = opts
     { configFile, nodeModule } = parentSpec
     callers = childCallers.concat nodeModule
-    conf = findModule(base, configFile, callers)
+    conf = findModule(Object.assign({}, opts, { base, fileName: configFile, callers }))
     conf.parents?.forEach (p) ->
-      addParent(di, base, p, callers)
-    populateDI(di, base, conf.modules, callers)
+      innerOpts = Object.assign {}, opts,
+        base: base
+        parentSpec: p
+        childCallers: callers
+      addParent(di, innerOpts)
+
+    populateOpts = Object.assign {}, opts,
+      base: base
+      modules: conf.modules
+      callers: callers
+    populateDI(di, populateOpts)
