@@ -1,18 +1,19 @@
 { normalize, join, dirname } = require 'path'
 makePath = require './make-path'
 CouldNotLoad = require './could-not-load'
+instantiateModule = require './instantiate-module'
 
 tryCustomPath = (opts) ->
   { getCustomPath } = opts
   fullPath = getCustomPath(opts)
-  instance: require fullPath
+  instance: instantiateModule fullPath
   path: fullPath
 
 findModule = (opts) ->
   { base, fileName, callers, getCustomPath } = opts
   fullPath =  makePath base, fileName, callers
   try
-    instance: require fullPath
+    instance: instantiateModule fullPath
     path: fullPath
   catch e
     if getCustomPath?
@@ -25,7 +26,7 @@ findModule = (opts) ->
 tryFind = (opts) ->
   { base, fileName, callers } = opts
   try
-    instance: require fileName
+    instance: instantiateModule fileName
     path: fileName
   catch e
     if e.code == 'MODULE_NOT_FOUND'

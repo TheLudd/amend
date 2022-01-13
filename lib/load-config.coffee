@@ -1,5 +1,6 @@
-Container = require './container'
 normalize = require('path').normalize
+Container = require './container'
+instantiateModule = require './instantiate-module'
 
 isRelative = (path) -> path.indexOf('.') == 0
 
@@ -44,9 +45,9 @@ populateContainer = (di, modules, basePath) ->
     path = getPath moduleConfig
     fullPath = getFullPath path, basePath
     try
-      module = require fullPath
+      module = instantiateModule fullPath
     catch e
-      module = require path
+      module = instantiateModule path
     type = evaluateType moduleConfig, module
     if type == 'spread'
       di.spread module
@@ -61,7 +62,7 @@ module.exports = (options) ->
   modules = config.modules || {}
   configParents = config.parents || []
   configParents.forEach (p) ->
-    parentModules = require joinPaths [ p.nodeModule, p.configFile ]
+    parentModules = instantiateModule joinPaths [ p.nodeModule, p.configFile ]
     populateContainer(di, parentModules.modules, p.nodeModule)
   populateContainer(di, modules, basePath)
 

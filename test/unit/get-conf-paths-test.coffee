@@ -2,10 +2,10 @@ getConfPaths = require '../../lib/get-conf-paths'
 
 describe 'getConfPaths', ->
 
-  findPathStub = (base, fileName, callers) ->
+  findPathStub = ({ base, fileName, callers }) ->
     [ base ].concat(callers).concat(fileName).join '/'
 
-  findMouleStub = (base, fileName, callers) ->
+  findMouleStub = ({ base, fileName, callers }) ->
     if callers[0] == 'parent1' && fileName == './parent-config.json'
       modules:
         bee: 'boo'
