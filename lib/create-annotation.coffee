@@ -1,5 +1,5 @@
 { join } = require('path')
-{ both, map, mergeAll, pickBy, concat, reduce } = require('ramda')
+{ both, map, mergeAll, pickBy } = require('ramda')
 analyzeFileDependencies = require './analyse-file-dependencies'
 
 isNotValue = (v) -> v.type != 'value'

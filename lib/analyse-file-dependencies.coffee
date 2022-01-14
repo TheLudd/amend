@@ -3,9 +3,7 @@
 {
   prop,
   isNil,
-  map,
-  mergeAll,
-  objOf,
+  createMapEntry,
   pathEq,
   find,
 } = require('ramda')
@@ -52,5 +50,5 @@ module.exports = ([ name, path ]) ->
         resolveStatement(body, getMainExportValue(mainExportStatement))
       if isNil(resolvedMainExportStatement) || !isFunction(resolvedMainExportStatement)
       then {}
-      else objOf name, getFunctionParameters(resolvedMainExportStatement)
+      else createMapEntry name, getFunctionParameters(resolvedMainExportStatement)
     )

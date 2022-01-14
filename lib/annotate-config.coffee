@@ -1,5 +1,5 @@
 { dirname } = require('path')
-{ chain, identity, append, map, mergeAll } = require 'ramda'
+{ append, map, mergeAll } = require 'ramda'
 createAnnotation = require './create-annotation'
 
 annotateConfig = (cwd, config, moduleName = '') ->

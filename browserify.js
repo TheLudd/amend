@@ -1,4 +1,3 @@
-var R = require('ramda')
 var normalize = require('path').normalize;
 var findModule = require('./dist/find-module');
 var getConfPaths = require('./dist/get-conf-paths')(findModule.path, findModule.instance);
