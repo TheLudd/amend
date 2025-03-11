@@ -40,7 +40,7 @@ module.exports = class Container
     else
       return @_parents[registeredAt].get(name)
 
-  _isInstantiated: (name) -> Object.keys(@_instances).indexOf(name) != -1
+  _isInstantiated: (name) -> @_instances.hasOwnProperty(name)
 
   _registeredAt: (name) ->
     if @_registrations[name]?
