@@ -42,11 +42,13 @@ module.exports = class Container
 
   _isInstantiated: (name) -> @_instances.hasOwnProperty(name)
 
-  _registeredAt: (name) ->
+  _registeredAt: (name, seen = new Set()) ->
+    return undefined if seen.has @
+    seen.add @
     return 'local' if @_registrations[name]?
     index = @_parents.length - 1
     while index >= 0
-      return index if @_parents[index]._registeredAt(name)?
+      return index if @_parents[index]._registeredAt(name, seen)?
       index -= 1
     return undefined
 
