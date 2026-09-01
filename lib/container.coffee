@@ -13,6 +13,8 @@ runFactory = (factory, args) ->
 throwNotFound = (name, parent) ->
   throw new ModuleNotFound name, parent
 
+hasOwnProperty = Object.prototype.hasOwnProperty
+
 module.exports = class Container
   constructor: (conf = {}, @_parents = []) ->
     @_modules = conf.modules || conf
@@ -56,14 +58,18 @@ module.exports = class Container
 
   getRegistrations: ->
     return @_registrations if @_parents.length == 0
-    registrations = {}
-    @_assignRegistrationsTo registrations
-    registrations
+    @_getRegistrations()
 
-  _assignRegistrationsTo: (target) ->
-    parent._assignRegistrationsTo target for parent in @_parents
-    target[name] = registration for name, registration of @_registrations
-    return
+  _getRegistrations: (target = {}, seen = new Set()) ->
+    return target if seen.has @
+    seen.add @
+    for own name, registration of @_registrations
+      target[name] = registration unless hasOwnProperty.call target, name
+    index = @_parents.length - 1
+    while index >= 0
+      @_parents[index]._getRegistrations target, seen
+      index -= 1
+    target
 
   getArguments: (name) ->
     if @_modules[name]?
