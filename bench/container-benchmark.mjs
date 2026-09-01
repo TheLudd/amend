@@ -35,7 +35,7 @@ bench.add('getRegistrations', () => {
 
 const EXPECTED_LATENCY_AVERAGE_MS = {
   'get 99 sampled registrations': 0.7,
-  getRegistrations: 1480,
+  getRegistrations: 530,
 }
 
 await bench.run()
