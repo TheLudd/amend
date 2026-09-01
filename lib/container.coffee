@@ -32,8 +32,8 @@ module.exports = class Container
   spread: (obj) -> @value(k, v) for k, v of obj
 
   get: (name) ->
-    throwNotFound name unless @isRegistered name
     registeredAt = @_registeredAt(name)
+    throwNotFound name unless registeredAt?
     if registeredAt == 'local'
       @_instantiate name unless @_isInstantiated(name)
       return @_instances[name]
