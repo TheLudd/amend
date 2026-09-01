@@ -43,13 +43,12 @@ module.exports = class Container
   _isInstantiated: (name) -> @_instances.hasOwnProperty(name)
 
   _registeredAt: (name) ->
-    if @_registrations[name]?
-      return 'local'
-    else
-      for p, i in @_parents
-        if p._registeredAt(name)?
-          parentIndex = i
-      return parentIndex
+    return 'local' if @_registrations[name]?
+    index = @_parents.length - 1
+    while index >= 0
+      return index if @_parents[index]._registeredAt(name)?
+      index -= 1
+    return undefined
 
   isRegistered: (name) -> @_registeredAt(name) != undefined
 
