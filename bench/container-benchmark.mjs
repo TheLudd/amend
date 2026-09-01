@@ -29,8 +29,13 @@ bench.add(`get ${sample.length} sampled registrations`, () => {
   sample.forEach((name) => rootContainer.get(name))
 })
 
+bench.add('getRegistrations', () => {
+  rootContainer.getRegistrations()
+})
+
 const EXPECTED_LATENCY_AVERAGE_MS = {
   'get 99 sampled registrations': 0.7,
+  getRegistrations: 1480,
 }
 
 await bench.run()
